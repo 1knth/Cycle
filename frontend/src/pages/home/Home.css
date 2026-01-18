@@ -1,8 +1,8 @@
 .hero-container {
     display: flex;
-    align-items: center;
     flex-direction: column;
-    height: 100vh;
+    align-items: center;
+    height: 190vh;
 }
 
 .hero-container h1 {
@@ -13,19 +13,29 @@
     color: #0e0f11;
 }
 
+.card{
+    height: 100vh;
+}
+
 .card img{
+    height: 150vh;
     filter: drop-shadow(0 0 40px #00000070);
     user-select: none;
+    margin: 0;
+    padding: 0;
 }
 
 
 span {
     text-decoration: underline;
     color: #0e0f11;
+    font-weight: 700;
     /* font-style: italic; */
 }
 
 .hero-container button {
+    width: 10rem;
+    height: 4em;
     border-style: none;
     border-radius: 4px;
     padding-left: 20px;
@@ -41,13 +51,14 @@ span {
     transition: 0.3s;
     background-color: rgb(209, 209, 209);
     color: black;
+    cursor: pointer;
 }
 
 .text-container .divider {
     width: 500px;
     height: 1.5px;
     background-color: rgba(49, 49, 49, 0.159);
-    margin: 0 0 5px;
+    margin: 10px 0 0 0px;
     user-select: none;
 }
 
@@ -57,10 +68,25 @@ span {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    align-items: center;
+    text-align: center;
 }
 
 .text-container p {
     font-size: 1.3rem;
     color: #0e0f11;
     margin: 10px 0 20px 0;
+}
+
+.points-container {
+    display: flex;
+}
+
+.points {
+    font-size: 2rem;
+    padding: 0;
+    margin: 0rem 0 2rem 7rem;
+    text-align: left;
+    opacity: 70%;
+    user-select: none;
 }

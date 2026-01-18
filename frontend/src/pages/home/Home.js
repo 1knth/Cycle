@@ -12,22 +12,30 @@ function Home () {
 
     return (
         // <img src=''></img>
-        <div>
+        <div className="home-wrapper">
             <navbar className="navbar-container">
                 <Navbar />
             </navbar>
             <section className="hero-container">
-                <h1>Financial Freedom Begins Here.</h1>
+                <h1>Spend because you can <span>Afford</span> to.</h1>
                 <div className="text-container" >
                     <div className="divider" ></div>
                     <p>
-                        Take control of your finances with our intuitive budgeting tools. 
-                        <br/>Return <span>more</span> than the yearly average from the S&P500. 
-                        <br/>Our custom AI agent will analyze risk and advise on your every day financial decisions.
+                        <br/> Cycle turns transactional data into clear suggestions by using quantitative analysis
+                        <br/> and creates a budget tailored for you—so decisions feel <span>obvious</span>, not emotional.​
                     </p>
                     <button onClick={button}>Get Started</button>
                 </div>
                 <div className="card"><img src={card}></img></div>
+            </section>
+            <section className="about-section">
+                <div className="points-container">
+                    <p className="points">
+                        <br/> &gt; a budget that adapts to your life.
+                        <br/> &gt; see every transaction.
+                        <br/> &gt; spot risk early.
+                    </p>
+                </div>
             </section>
         </div>
     );

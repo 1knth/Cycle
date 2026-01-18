@@ -1,0 +1,8 @@
+* {
+  text-decoration: none;
+}
+
+.router-container {  
+  background-color: rgb(255, 255, 255);
+  min-height: 100vh;
+}

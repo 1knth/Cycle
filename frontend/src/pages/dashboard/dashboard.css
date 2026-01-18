@@ -1,0 +1,34 @@
+* {
+    margin: 0;
+}
+
+.bar {
+    display: flex;
+    align-items: center;
+    padding: 0 0 0 10px;
+    height: 7vh;
+    background-color: rgb(39, 39, 39);
+    color: rgb(255, 255, 255);
+    filter: drop-shadow(0 0 10px #0000002f);
+}
+
+.dashboard-container .dashboard .dashbar-container {
+    display: flex;
+}
+
+.dashboard-logo {
+    width: 6%;
+    user-select: none;
+}
+
+.dashboard-logo:hover {
+    cursor: pointer;
+}
+
+.dashboard-container {
+    background-color: rgb(30, 30, 30);
+}
+
+.dashboard-viewport {
+    display: flex;
+}

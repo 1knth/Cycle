@@ -24,7 +24,10 @@ function Home () {
                         <br/> Cycle turns transactional data into clear suggestions by using quantitative analysis
                         <br/> and creates a budget tailored for you—so decisions feel <span>obvious</span>, not emotional.​
                     </p>
-                    <button onClick={button}>Get Started</button>
+                </div>
+                <div className="button-container">
+                    <button className="reg-cta" onClick={button}>Get Started &nbsp;&nbsp;&gt; </button>
+                    <button className="why-cta" onClick={button}>Why Cycle?</button>
                 </div>
                 <div className="card"><img src={card}></img></div>
             </section>

@@ -33,7 +33,32 @@ span {
     /* font-style: italic; */
 }
 
-.hero-container button {
+.button-container {
+    display: flex;
+    gap: 1rem;
+}
+
+.why-cta{
+    border-width: 0.05rem;
+    background-color: #ffffff;
+    width: 8rem;
+    height: 4em;
+    border-radius: 4px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    user-select: none;
+}
+
+.why-cta:hover{
+    background-color: #545e72;
+    transition: 0.3s;
+    color: rgb(255, 255, 255);
+    cursor: pointer;
+}
+
+.hero-container .reg-cta {
     width: 10rem;
     height: 4em;
     border-style: none;
@@ -47,7 +72,7 @@ span {
     user-select: none;
 }
 
-.hero-container button:hover {
+.hero-container .reg-cta:hover {
     transition: 0.3s;
     background-color: rgb(209, 209, 209);
     color: black;
@@ -74,7 +99,7 @@ span {
 
 .text-container p {
     font-size: 1.3rem;
-    color: #0e0f11;
+    color: #545e72;
     margin: 10px 0 20px 0;
 }
 

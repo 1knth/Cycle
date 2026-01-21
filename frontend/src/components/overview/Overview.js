@@ -1,35 +1,52 @@
 import './Overview.css';
+import DailySpend from './subcomponents/DailySpend.js';
 // import database query
 
 function Overview() {
-    const balance = 12.98
     return (
         <section>
-            <div className="cards-container"></div>
-                <div className="cards">
-                    <div className="daily-spend-title">   
-                        <p>Daily Spending</p>
+            <div className="cards-container">
+                <div className="overview-cards">
+                    <div className="title">   
+                        <p>Balance</p>
                     </div>
-                    <div className="daily-spend-amount">   
-                        <h2>${balance}</h2>
-                    </div>
-                </div>
-                <div className="cards">
-                    <div className="daily-spend-title"> 
-                        <p>Daily Spending</p>
-                    </div>
-                    <div className="daily-spend-amount">   
-                        <h2>${balance}</h2>
+                    <div className="amount">   
+
                     </div>
                 </div>
-                <div className="cards">
-                    <div className="daily-spend-title"> 
+                <div className="overview-cards">
+                    <div className="title">   
                         <p>Daily Spending</p>
                     </div>
-                    <div className="daily-spend-amount">   
-                        <h2>${balance}</h2>
+                    <div className="amount">   
+                        <DailySpend/>
                     </div>
                 </div>
+                <div className="overview-cards">
+                    <div className="title"> 
+                        <p>Monthly Spending</p>
+                    </div>
+                    <div className="amount">   
+
+                    </div>
+                </div>
+                <div className="overview-cards">
+                    <div className="title"> 
+                        <p>Growth</p>
+                    </div>
+                    <div className="amount">   
+
+                    </div>
+                </div>
+                <div className="overview-cards">
+                    <div className="title"> 
+                        <p>Markets</p>
+                    </div>
+                    <div className="amount">   
+
+                    </div>
+                </div>
+            </div>
         </section>
     )
 }

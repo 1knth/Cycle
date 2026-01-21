@@ -1,41 +1,28 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-require('dotenv').config();
+require('dotenv').config()
+const { MongoClient, ServerApiVersion } = require('mongodb');
 
-const app = express();
 
-app.use(cors());
-app.use(express.json());
+const DB_URL = process.env.atlas_URI;
 
-// MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('✅ MongoDB Connected'))
-  .catch(err => console.error('❌ Error:', err));
-
-// Import model
-const Transaction = require('./models/Transaction');
-
-// GET all transactions
-app.get('/api/transactions', async (req, res) => {
-  try {
-    const transactions = await Transaction.find();
-    res.json(transactions);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(DB_URL, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
   }
 });
 
-// POST new transaction
-app.post('/api/transactions', async (req, res) => {
+async function run() {
   try {
-    const newTransaction = new Transaction(req.body);
-    const saved = await newTransaction.save();
-    res.status(201).json(saved);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
+    // Connect the client to the server	(optional starting in v4.7)
+    await client.connect();
+    // Send a ping to confirm a successful connection
+    await client.db("admin").command({ ping: 1 });
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+  } finally {
+    // Ensures that the client will close when you finish/error
+    await client.close();
   }
-});
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`🚀 Server on port ${PORT}`));
+}
+run().catch(console.dir);

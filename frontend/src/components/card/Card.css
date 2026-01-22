@@ -1,0 +1,44 @@
+.cards {
+    display: flex;
+    align-items: center;
+    width: 28vw;
+    height: 28vh;
+    padding: 0;
+    background-color: rgb(39, 39, 39);
+    color: rgb(255, 255, 255);
+    border-radius: 15px;
+}
+
+.cards-2 {
+    width: 90vw;
+    height: 33vh;
+    padding: 0;
+    background-color: rgb(39, 39, 39);
+    color: rgb(255, 255, 255);
+    border-radius: 15px;
+}
+
+.card-text-container {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    gap: 0.5rem;
+    margin-left: 3rem;
+}
+
+.title {
+    font-size: 0.9rem;
+    font-weight: 400;
+    opacity: 70%;
+}
+
+
+
+.amount {
+    font-size: 2rem;
+}
+
+.kpi {
+    color: rgb(164, 255, 164);
+    padding-top: 2rem;
+}

@@ -1,5 +1,6 @@
 * {
     margin: 0;
+    padding: 0;
 }
 
 .bar {
@@ -12,10 +13,6 @@
     filter: drop-shadow(0 0 10px #0000002f);
 }
 
-.dashboard-container .dashboard .dashbar-container {
-    display: flex;
-}
-
 .dashboard-logo {
     width: 6%;
     user-select: none;
@@ -23,12 +20,27 @@
 
 .dashboard-logo:hover {
     cursor: pointer;
+    width: 7%;
+    transition: 0.5s ease;
+}
+.dashboard-logo:hover {
+    cursor: pointer;
+    width: 6.5%;
 }
 
 .dashboard-container {
-    background-color: rgb(30, 30, 30);
+    /* background-color: rgb(30, 30, 30); */
+    height: 100vh;
+    background-color: rgb(174, 174, 174);
 }
 
 .dashboard-viewport {
     display: flex;
+}
+
+.sections-container {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
 }

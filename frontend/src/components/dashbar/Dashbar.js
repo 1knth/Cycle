@@ -33,8 +33,7 @@ function Dashbar() {
     // }
 
     return (
-        <div>
-            <h1 className="dashbar-title">Dashboard</h1>
+        <div className="dashbar-container">
             <ul className="dashbar-ul">{listItems}</ul>
         </div>
     )

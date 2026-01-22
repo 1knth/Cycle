@@ -1,14 +1,17 @@
-
+.dashbar-container {
+    display: flex;
+    flex-direction: column;
+}
 
 .dashbar-ul {
     display: flex;
     align-items: center;
     list-style: none;
     flex-direction: column;
-    gap: 2px;
+    gap: 5px;
     background-color: rgb(39, 39, 39);
     padding: 0;
-    height: 250vh;
+    height: 100vh;
     margin: 0;
     user-select: none;
 }
@@ -17,7 +20,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 10vw;
+    width: 16vw;
     height: 5vh;
     color: rgb(169, 169, 169);
     font-size: 16px;
@@ -37,7 +40,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 10vw;
+    width: 16vw;
     height: 5vh;
     color: rgb(255, 255, 255);
     background-color: rgb(18, 18, 18);

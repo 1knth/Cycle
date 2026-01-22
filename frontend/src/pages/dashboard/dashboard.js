@@ -21,9 +21,7 @@ function Dashboard() {
                 <section className="dashboard">
                     <div className="dashboard-viewport">
                         {/*  DASHBAR TAKES UP LEFT SIDE  */}
-                        <div className="dashbar-container">
-                            <Dashbar/>
-                        </div>
+                         <Dashbar/>
                         {/* this is for the routes (DARKEST RECTANGLE | Viewport For Virtual DOM) */}
                         <section className="sections-container">
                             <Outlet/>

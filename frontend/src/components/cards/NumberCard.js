@@ -1,9 +1,14 @@
-import './Card.css';
-
+import './NumberCard.css';
+import logo from '../../assets/logo.png'
+import arrow from '../../assets/arrow-up-solid-full.svg' 
 
 // import database query
 
 function Card({name, data, kpi}) {
+// Checks the gain/loss and updates the corresponding arrow direction on UI    
+    // const flipArrow = () => {
+        
+    // }
 
     return (
         <div className="cards">
@@ -19,6 +24,7 @@ function Card({name, data, kpi}) {
                 <div className="kpi">
                     {/* <div>{kpi}</div> */}
                     <div>142% Gain (1y)</div>
+                    <img src={arrow}></img>
                 </div>
             </div>
         </div>

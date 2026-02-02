@@ -1,5 +1,5 @@
 import './Overview.css';
-import Card from "../card/Card.js"
+import NumberCard from "../cards/NumberCard.js"
 import React, {useState, useEffect} from 'react';
 // import database query
 
@@ -8,7 +8,7 @@ function Overview() {
         <section className="overview-section">
             <div className="cards-container">
                 <div className="overview-cards">
-                    <Card/>
+                    <NumberCard/>
                 </div>
                 <div className="overview-cards">
 

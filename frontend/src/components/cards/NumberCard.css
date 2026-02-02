@@ -1,8 +1,8 @@
 .cards {
     display: flex;
     align-items: center;
-    width: 28vw;
-    height: 28vh;
+    width: 500px;
+    height: 300px;
     padding: 0;
     background-color: rgb(39, 39, 39);
     color: rgb(255, 255, 255);
@@ -27,7 +27,7 @@
 }
 
 .title {
-    font-size: 0.9rem;
+    font-size: 2rem;
     font-weight: 400;
     opacity: 70%;
 }
@@ -35,10 +35,13 @@
 
 
 .amount {
-    font-size: 2rem;
+    font-size: 4rem;
 }
 
 .kpi {
+    display: flex;
+    flex-direction: row;
+    font-size: 1.5rem;
     color: rgb(164, 255, 164);
     padding-top: 2rem;
 }

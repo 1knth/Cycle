@@ -1,0 +1,35 @@
+.cards-container {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    flex-direction: row;
+    height: 13rem;
+    width: 100%;
+    /* margin: 1rem 1rem 1rem 1rem; */
+    padding: 0;
+    gap: 1rem;
+    /* background-color: red; */
+}
+
+
+.cards-container-2 {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    flex-direction: row;
+    gap: 1rem;
+    height: 26rem;
+    width: 100%;
+    /* margin: 1rem 1rem 1rem 1rem; */
+    padding: 0;
+    /* background-color: red; */
+}
+
+.dash-component-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex: 1 1 250px;
+    /* max-width: 1500px;  */
+    max-width: 100%;
+}

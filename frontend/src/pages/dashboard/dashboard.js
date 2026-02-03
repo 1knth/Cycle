@@ -1,6 +1,7 @@
 import './dashboard.css';
 import { Outlet, useNavigate } from 'react-router-dom';
 import Dashbar from '../../components/dashbar/Dashbar.js'
+import '../../components/cards/dash-component.css'
 
 function Dashboard() {
     const navigate = useNavigate();
@@ -26,7 +27,9 @@ function Dashboard() {
                         <section className="sections-container">
                             <Outlet/>
                         </section>
-                    
+                        <section>
+                            {/* Sidebar */}
+                        </section>
                     </div>
                 </section>
             </div>

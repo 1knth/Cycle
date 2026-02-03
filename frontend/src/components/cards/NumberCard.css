@@ -1,22 +1,44 @@
-.cards {
+.regular {
     display: flex;
     align-items: center;
-    width: 500px;
-    height: 300px;
+    width: 20rem;
+    height: 13rem;
+    margin: 0;
     padding: 0;
     background-color: rgb(39, 39, 39);
     color: rgb(255, 255, 255);
-    border-radius: 15px;
+    border-radius: 25px;
 }
 
-.cards-2 {
-    width: 90vw;
-    height: 33vh;
+.graph {
+    display: flex;
+    align-items: center;
+    width: 710px;
+    height: 13rem;
+    padding: 0;
+    margin: 0;
+    background-color: rgb(39, 39, 39);
+    color: rgb(255, 255, 255);
+    border-radius: 25px;
+}
+.chart {
+    display: flex;
+    align-items: center;
+    width: 40rem;
+    height: 26rem;
+    margin: 0;
     padding: 0;
     background-color: rgb(39, 39, 39);
     color: rgb(255, 255, 255);
-    border-radius: 15px;
+    border-radius: 25px;
 }
+
+
+
+
+
+
+/* intra card */
 
 .card-text-container {
     display: flex;
@@ -27,21 +49,26 @@
 }
 
 .title {
-    font-size: 2rem;
+    display: flex;
+    justify-content: space-between;
+    width: 16rem;
+    font-size: 1.3rem;
     font-weight: 400;
     opacity: 70%;
 }
 
-
+.manage-settings:hover {
+    cursor: pointer;
+}
 
 .amount {
-    font-size: 4rem;
+    font-size: 2.5rem;
 }
 
 .kpi {
     display: flex;
     flex-direction: row;
-    font-size: 1.5rem;
+    font-size: 1.1rem;
     color: rgb(164, 255, 164);
     padding-top: 2rem;
 }

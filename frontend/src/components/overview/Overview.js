@@ -39,6 +39,7 @@ function Overview() {
                 <NumberCard
                     type="chart"
                     name="Spending Chart" 
+                    data="32"
                 />
                 
             </div>

@@ -2,19 +2,25 @@ import './dashboard.css';
 import { Outlet, useNavigate } from 'react-router-dom';
 import Dashbar from '../../components/dashbar/Dashbar.js'
 import '../../components/cards/dash-component.css'
+import LinkAccount from '../../components/link-account-page/LinkAccount.js';
+import {useState} from 'react';
+// import plaidLinked from '../../components/link-account-page/Authentication.js'
 
 function Dashboard() {
     const navigate = useNavigate();
-    const goHome = () => {
-        navigate('/')
-    }
+    const logo = require('../../assets/whitename.png');
+
+    const [plaidLinked, plaidLinkedState] = useState(false);
+    const linked = () => {
+        return  (plaidLinked ? <Outlet/> : <LinkAccount/>);
+    };
     
-    const logo = require('../../assets/whitename.png')
+    
     return (
         <div>
             {/* the navbar at the top */}
             <header className="bar">
-                <img className="dashboard-logo" src={logo} onClick={goHome}></img>
+                <img className="dashboard-logo" src={logo} onClick={() => {navigate('/')}}></img>
             </header>
 
             {/* PAGE UNDER THE NAVBAR */}
@@ -25,7 +31,7 @@ function Dashboard() {
                          <Dashbar/>
                         {/* this is for the routes (DARKEST RECTANGLE | Viewport For Virtual DOM) */}
                         <section className="sections-container">
-                            <Outlet/>
+                            {linked()}
                         </section>
                         <section>
                             {/* Sidebar */}

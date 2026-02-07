@@ -7,7 +7,7 @@ import Navbar from "../../components/navbar/Navbar";
 function Home () {
     const navigate = useNavigate();
     const button = () => {
-        navigate('/dashboard/overview')
+        navigate('/dashboard')
     }
 
     return (

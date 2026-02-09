@@ -1,5 +1,5 @@
-import './LinkAccount.css';
-import PlaidLinkButton from '../link-account-page/plaid-link-acc/PlaidLinkButton.js'
+import './LinkBank.css';
+import PlaidLinkButton from './PlaidLinkButton.js'
 import Card from '../cards/NumberCard.js';
 import '../cards/dash-component.css';
 

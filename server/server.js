@@ -1,37 +1,40 @@
-require('dotenv').config()
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const app = express();
 const bodyParser = require('body-parser');
-const plaid = require('plaid');
+
+const app = express();
+
+const PORT = process.env.PORT || 5001;
 
 //middleware
-app.use(cors())
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true,
+}));
+app.use(express.json());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}))
-const PORT = process.env.PORT;
-
-
-// test for successful connection
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}\n`);
-});
-
+app.use(bodyParser.urlencoded({extended: true}));
 
 //Mongodb config
 const DB_URL = process.env.DB_URL;
-mongoose.connect(DB_URL).then(() => console.log('connected to db'))
-.catch((err) => console.error('connection error:', err));
+if (!DB_URL) {
+  console.error("No DB_URL found in .env file");
+}
 
-// app.get('/api/transactions/add', (req, res) => {
-//   console.log('transaction data: ', req.body);
-//   res.status(200).json({
-//       status: "Success",
-//       message: "Server received the transaction!"
-//   });
-// });
+mongoose.connect(DB_URL)
+  .then(() => {
+    console.log('mongodb is connected');
+  })
+  .catch((err) => {
+    console.error('mongodb connection error:', err);
+  });
 
+require('./routes/transaction.routes.js')(app);
+require('./routes/auth.routes.js')(app);
+// require('./routes/linkToken.js')(app);
 
-require('./routes/transactionRoutes.js')(app);
-
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}\n`);
+});

@@ -1,5 +1,5 @@
 const transactionController = require('../controllers/transaction.controller.js');
 
 module.exports = function(app) {
-    app.post('/api/transaction/add', transactionController.addTransaction);
+    app.post('/transactions/add', transactionController.addTransaction);
 }

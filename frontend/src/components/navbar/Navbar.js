@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'; // handles link clicks
 function Navbar() { 
     const logo = <img className="logo" src={require('../../assets/blackname.png')} alt='logo'/>
     const navbarItems = [
-        { title: logo, path:"/", id: 0 },
+        { title: logo, path:"/", id: 0, },
         // { title: 'Home', path: "/", id: 1 },                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
         { title: 'About', path: "/about", id: 2 },
         { title: 'Explore', path: "/", id: 3 },

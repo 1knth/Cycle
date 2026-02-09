@@ -50,11 +50,11 @@ span {
     padding-top: 10px;
     padding-bottom: 10px;
     user-select: none;
+    transition: 0.3s ease;
 }
 
 .why-cta:hover{
     background-color: #545e72;
-    transition: 0.3s;
     color: rgb(255, 255, 255);
     cursor: pointer;
 }
@@ -71,10 +71,10 @@ span {
     color: white;
     background-color: rgb(49, 49, 49);
     user-select: none;
+    transition: 0.3s ease;
 }
 
 .hero-container .reg-cta:hover {
-    transition: 0.3s;
     background-color: rgb(209, 209, 209);
     color: black;
     cursor: pointer;

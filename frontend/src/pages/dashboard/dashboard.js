@@ -2,26 +2,34 @@ import './dashboard.css';
 import { Outlet, useNavigate } from 'react-router-dom';
 import Dashbar from '../../components/dashbar/Dashbar.js'
 import '../../components/cards/dash-component.css'
-import LinkAccount from '../../components/link-account-page/LinkAccount.js';
+import LinkAccount from '../../components/link-account-page/LinkBank.js';
 import {useState} from 'react';
 // import plaidLinked from '../../components/link-account-page/Authentication.js'
 
 function Dashboard() {
     const navigate = useNavigate();
     const logo = require('../../assets/whitename.png');
-
-    const [plaidLinked, plaidLinkedState] = useState(false);
+    const [plaidLinked, setPlaidLinked] = useState(false);
     const linked = () => {
         return  (plaidLinked ? <Outlet/> : <LinkAccount/>);
     };
+    const username = JSON.parse(localStorage.getItem("user"));
     
-    
+    // const logout = () => {
+    //     localStorage.removeItem("user");
+    //     navigate('/login');
+    // }
+
     return (
         <div>
             {/* the navbar at the top */}
-            <header className="bar">
+            <nav className="bar">
                 <img className="dashboard-logo" src={logo} onClick={() => {navigate('/')}}></img>
-            </header>
+                <div className="user-info">
+                    <p> User: {username?.username}</p>
+                    {/* <button onClick={logout()}>Logout</button> */}
+                </div>
+            </nav>
 
             {/* PAGE UNDER THE NAVBAR */}
             <div className="dashboard-container">

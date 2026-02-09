@@ -13,9 +13,9 @@ function Home () {
     return (
         // <img src=''></img>
         <div className="home-wrapper">
-            <navbar className="navbar-container">
+            <nav className="navbar-container">
                 <Navbar />
-            </navbar>
+            </nav>
             <section className="hero-container">
                 <h1>Spend because you can <span>Afford</span> to.</h1>
                 <div className="text-container" >

@@ -1,103 +1,30 @@
-What to build (core features)
-If Cycle is spend-plan-first, the budget model and UI usually center on:
-​
+Plan: Build Financial Tracking App with Plaid & Budget Forecasting
 
-Income recognition: regular income streams + pay cycle.
-​
+(1) Fix broken authentication and connect routes,
 
-Bills/recurring engine: detect, confirm, and schedule recurring items; distinguish bills vs subscriptions.
-​
+(2) Implement Plaid integration with transaction sync,
 
-Planned spending bucket: optional category targets (not strict caps), plus one-time planned expenses.
-​
+(3) Add budget forecasting. Currently, your login is broken, Plaid routes aren't mounted, and frontend isn't fetching real data. You need to work backend-first to establish a stable API before the frontend can consume it.
 
-“Available / safe-to-spend” number: what remains after bills + goals + planned items.
-​
+DONE:
 
-How this differs from envelopes (so you don’t accidentally build both)
-Envelope/zero-based systems push you to assign every dollar to categories (“every dollar has a job”), and overspending in one category forces tradeoffs between categories.
-​
-Spend plans can still show categories, but the “truth” is your overall plan (bills, goals, runway), with categories acting as guidance and diagnostics
+- Fix authentication pipeline - Repair auth.controller.js login() function, add JWT middleware, mount authRoutes.js properly in server.js
 
+TO-DO
 
-READ:
+- Mount Plaid routes - Import and activate linkToken.js routes in server.js, fix clientUserId to use authenticated user
 
-Best order for Cycle (MVP)
-Auth + user model (skeleton app)
+- Create transaction sync endpoint - Build controller function to fetch transactions from Plaid API and persist to transactionModel.js
 
-Sign up / login / logout, session handling, protected routes, basic “user” table/collection.
+- Fix schema mismatches - Align transaction.controller.js expectations with transactionModel.js schema structure
 
-This unlocks “per-user” data storage (Plaid tokens, accounts, transactions).
-​
+- Connect frontend to real API - Update Overview.js, Transactions.js, and PlaidLinkButton.js to call correct endpoints and fetch real data
 
-Dashboard UI with fake data
+- Add budget forecasting - Create budget model and controller with safe financial forecasting (moving averages, trend analysis, category spending)
 
-Build the Overview/Analysis pages and components using static JSON so layout + UX stabilizes early.
+- Further Considerations
+  Authentication approach - Use JWT with refresh tokens? Sessions? Bearer tokens stored in httpOnly cookies? (Recommend JWT with refresh tokens for security)
 
-This prevents you from overfitting UI to whatever Plaid returns on day one.
-​
+- Budget forecasting model - Simple rules-based (monthly average × 12 = yearly)? ML-based (regression analysis)? Time-series forecasting (ARIMA)? (Recommend starting with moving averages + category trends, expand to ARIMA if needed)
 
-Plaid linking + data ingestion
-
-Implement Link flow, store tokens, then sync transactions incrementally (Plaid Transactions supports sync patterns).
-​
-
-Real aggregates + spend plan logic
-
-Compute safe-to-spend, forecasts, and analysis modules once transaction ingestion is reliable.
-
-
-
-NEXT STEPS: 
-
-Project skeleton
- Create /server Express app with express.json() + centralized error handler.
-​
-
- Add a router-per-domain structure: /api/auth, /api/plaid, /api/accounts, /api/transactions, /api/insights.
-​
-
- Connect MongoDB Atlas with env vars and a single shared DB client/connection module.
-
-Auth (cookie-based)
- Implement POST /api/auth/register (hash password, create user).
-
- Implement POST /api/auth/login (verify password, issue session cookie).
-
- Implement POST /api/auth/logout (clear cookie / invalidate session).
-
- Implement GET /api/auth/me (returns current user).
-
- Store auth token in an HttpOnly cookie (not localStorage) to reduce JavaScript access to the token.
-​
-
- Set cookie attributes that OWASP highlights for session cookies: HttpOnly, Secure, SameSite, and an explicit lifetime.
-​
-
- Add requireAuth middleware that blocks protected endpoints when the cookie/session is missing or invalid.
-​
-
-Plaid integration (server-only)
- POST /api/plaid/link-token → create link token for the logged-in user.
-
- POST /api/plaid/exchange-public-token → exchange public_token for access_token + item_id, store encrypted per user.
-
- DB collection: plaid_items { userId, itemId, accessTokenEncrypted, institution, createdAt }.
-
-Transactions & accounts data layer
- POST /api/sync/transactions (per user): pull incremental updates, upsert into transactions, update sync_state cursor.
-
- GET /api/accounts and GET /api/transactions?start=&end=&accountId= for your UI.
-
- Add user overrides tables/collections: category_overrides, merchant_overrides, excluded_transactions (so analysis becomes consistent).
-
-Spend plan computations (what your UI will call)
- GET /api/overview returns: safe-to-spend, MTD spend, income MTD, bills remaining this period, daily spend series, recent transactions.
-
- GET /api/analysis returns: cash-flow series, category breakdown, top movers vs last month, forecast-to-period-end.
-
-Frontend hookup (CRA)
- In CRA package.json, set "proxy": "http://localhost:<serverPort>" so fetch('/api/...') works without CORS during dev.
-​
-
- Create an API client wrapper that always calls /api/* and handles 401 → redirect to /login.
+- Real-time vs batch sync - Poll Plaid for new transactions periodically? Use webhooks? (Recommend daily batch sync initially + webhooks for real-time)

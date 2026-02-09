@@ -1,7 +1,7 @@
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/home/Home.js';
-import Signup from './pages/loginsignup/Signup.js';
+import Auth from './pages/loginsignup/auth.js';
 import Dashboard from './pages/dashboard/dashboard.js'
 import Overview from './components/overview/Overview.js'
 import Analytics from './components/analytics/Analytics.js';
@@ -16,7 +16,7 @@ function App() {
         <header className="router-container">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Signup />} />
+            <Route path="/login" element={<Auth />} />
             <Route path="/dashboard" element={<Dashboard />}>
             <Route path="overview" element={<Overview />} />
             <Route path="analytics" element={<Analytics />} />

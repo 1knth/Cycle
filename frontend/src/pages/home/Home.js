@@ -26,7 +26,7 @@ function Home () {
                     </p>
                 </div>
                 <div className="button-container">
-                    <button className="reg-cta" onClick={button}>Get Started &nbsp;&nbsp;&gt; </button>
+                    <button className="reg-cta" onClick={button}>Try Demo &nbsp;&nbsp;&gt; </button>
                     <button className="why-cta" onClick={button}>Why Cycle?</button>
                 </div>
                 <div className="card"><img src={card}></img></div>

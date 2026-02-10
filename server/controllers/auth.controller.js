@@ -53,12 +53,15 @@ exports.login = async (req, res) => {
             { expiresIn: 86400 } // 24 hours
         );
 
-        // 4. RESPOND: Send data back to React
+        // 4. RESPOND: Send data back to React (including bank details)
         res.status(200).send({
             id: user._id,
             username: user.username,
             email: user.email,
-            accessToken: token
+            accessToken: token,
+            plaidAccessToken: user.plaidAccessToken || null,
+            plaidItemId: user.plaidItemId || null,
+            hasBankLinked: !!user.plaidAccessToken
         });
 
     } catch (err) {
@@ -66,4 +69,20 @@ exports.login = async (req, res) => {
     }
 };
 
+exports.verifyToken = (req, res, next) => {
+    const token = req.headers['x-access-token'] || req.headers['authorization'];
 
+    if (!token) {
+        return res.status(403).send({ message: 'No token provided!' });
+    }
+
+    const actualToken = token.startsWith('Bearer ') ? token.slice(7) : token;
+
+    jwt.verify(actualToken, process.env.JWT_SECRET, (err, decoded) => {
+        if (err) {
+            return res.status(401).send({ message: 'Unauthorized!' });
+        }
+        req.user = { _id: decoded.id };
+        next();
+    });
+};

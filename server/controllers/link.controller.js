@@ -1,74 +1,65 @@
 const { Configuration, PlaidApi, PlaidEnvironments } = require('plaid');
 require('dotenv').config();
+const User = require('../models/user');
 
-// 1. Configure Plaid Client
+
+//intialize plaid client
 const configuration = new Configuration({
-  basePath: PlaidEnvironments.sandbox, // Change to .development later
+  basePath: PlaidEnvironments[process.env.PLAID_ENV || 'sandbox'],
   baseOptions: {
     headers: {
       'PLAID-CLIENT-ID': process.env.PLAID_CLIENT_ID,
       'PLAID-SECRET': process.env.PLAID_SECRET,
+      'Plaid-Version': '2020-09-14', // Recommended to include
     },
   },
 });
+const plaidClient = new PlaidApi(configuration);
 
-const client = new PlaidApi(configuration);
+// 1. Create Link Token
+exports.createLinkToken = async (req, res) => {
+  try {
+    // Ensure this is a string
+    const clientUserId = req.user._id.toString(); 
 
-// 2. Wrap everything in the export function so 'app' works
-module.exports = function(app) {
+    const request = {
+      user: { client_user_id: clientUserId },
+      client_name: 'Cycle',
+      products: ['transactions'],
+      country_codes: ['US', 'CA'],
+      language: 'en',
+    };
 
-    // PART 1: Create Link Token
-    app.post('/link/create_link_token', async function (request, response) {
-        
-        // FIX: You need a user ID. For now, we use a static string for testing.
-        // Later, you will get this from your logged-in user session.
-        const clientUserId = "user_" + crypto.randomUUID();
+    const createTokenResponse = await plaidClient.linkTokenCreate(request);
+    res.json(createTokenResponse.data);
+  } catch (error) {
+    // Plaid errors are usually in error.response.data
+    console.error('Plaid Link Token Error:', error.response?.data || error.message);
+    res.status(500).json({ error: error.response?.data || error.message });
+  }
+};
 
-        const linkTokenRequest = {
-            user: {
-                client_user_id: clientUserId,
-            },
-            client_name: 'Cycle Finance',
-            products: ['auth', 'transactions'], // Added 'transactions' for your finance app
-            language: 'en',
-            country_codes: ['US', 'CA'], // US and Canada
-            
-            // NOTE: Only include redirect_uri if you registered 'http://localhost:3000/' 
-            // in your Plaid Dashboard > API > Allowed Redirect URIs.
-            // If not, keep this commented out or it will fail.
-            // redirect_uri: 'http://localhost:3000/', 
-        };
-
-        try {
-            const createTokenResponse = await client.linkTokenCreate(linkTokenRequest);
-            response.json(createTokenResponse.data);
-        } catch (error) {
-            console.error("Plaid Error:", error.response ? error.response.data : error.message);
-            response.status(500).json({ error: error.message });
-        }
+// 2. Exchange Public Token
+exports.exchangePublicToken = async (req, res) => {
+  try {
+    const { public_token } = req.body;
+    
+    const response = await plaidClient.itemPublicTokenExchange({
+      public_token: public_token,
     });
 
-    // PART 2: Exchange Public Token
-    app.post('/api/exchange_public_token', async function (request, response) {
-        const publicToken = request.body.public_token;
-        
-        try {
-            const tokenResponse = await client.itemPublicTokenExchange({
-                public_token: publicToken,
-            });
+    const accessToken = response.data.access_token;
+    const itemId = response.data.item_id;
 
-            const accessToken = tokenResponse.data.access_token;
-            const itemID = tokenResponse.data.item_id;
-
-            console.log("Access Token:", accessToken);
-            console.log("Item ID:", itemID);
-
-            // TODO: Save 'accessToken' to your MongoDB user document here!
-
-            response.json({ public_token_exchange: 'complete' });
-        } catch (error) {
-            console.error("Plaid Exchange Error:", error.response ? error.response.data : error.message);
-            response.status(500).json({ error: error.message });
-        }
+    // Corrected Database Save Logic
+    await User.findByIdAndUpdate(req.user._id, { 
+      plaidAccessToken: accessToken, 
+      plaidItemId: itemId 
     });
+
+    res.json({ success: true, itemId });
+  } catch (error) {
+    console.error('Plaid Exchange Error:', error.response?.data || error.message);
+    res.status(500).json({ error: error.response?.data || error.message });
+  }
 };

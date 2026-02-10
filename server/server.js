@@ -3,9 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-
 const app = express();
-
 const PORT = process.env.PORT || 5001;
 
 //middleware
@@ -33,7 +31,8 @@ mongoose.connect(DB_URL)
 
 require('./routes/transaction.routes.js')(app);
 require('./routes/auth.routes.js')(app);
-// require('./routes/linkToken.js')(app);
+require('./routes/link.routes.js')(app);
+require('./routes/user.routes.js')(app);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}\n`);

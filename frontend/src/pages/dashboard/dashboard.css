@@ -7,7 +7,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 0 0 10px;
     height: 4rem;
     background-color: rgb(39, 39, 39);
     color: rgb(255, 255, 255);
@@ -44,8 +43,13 @@
     background-color: rgb(255, 76, 76);
 }
 
+.dashboard {
+    width: 100%;
+}
+
 .dashboard-logo {
-    width: 6%;
+    margin-left: 1rem;
+    width: 5rem;
     user-select: none;
     transition: 0.5s ease;
 }
@@ -66,6 +70,7 @@
 .dashboard-viewport {
     display: flex;
     height: 100%;
+    width: 100%;
     
 }
 

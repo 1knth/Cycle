@@ -1,30 +1,3 @@
-// const mongoose = require('mongoose');
-
-// const UserSchema = new mongoose.Schema({
-//     username: {
-//         type: String,
-//         required: true,
-//         unique: true,
-//     },
-//     email: {
-//         type: String,
-//         required: true,
-//         unique: true,
-//     },
-//     password: {
-//         type: String,
-//         required: true,
-//     },
-//     plaidItems: [{
-//         bank: String,
-//         plaidItemID: String,
-//         plaidAccessToken: String
-//     }]
-// },{ timestamps: true });
-
-// module.exports = mongoose.model('User', UserSchema);
-
-
 const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
@@ -41,6 +14,15 @@ const UserSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
+    },
+    plaidAccessToken: {
+        type: String,
+    },
+    plaidItemId: {
+        type: String,
+    },
+    lastSync: {
+        type: Date,
     }
 }, { timestamps: true });
 

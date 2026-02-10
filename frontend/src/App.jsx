@@ -1,12 +1,12 @@
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Home from './pages/home/Home.js';
-import Auth from './pages/loginsignup/auth.js';
-import Dashboard from './pages/dashboard/dashboard.js'
-import Overview from './components/overview/Overview.js'
-import Analytics from './components/analytics/Analytics.js';
-import Transactions from './components/transactions/Transactions.js';
-import Settings from './components/settings/Settings.js';
+import Home from './pages/home/Home.jsx';
+import Auth from './pages/loginsignup/auth.jsx';
+import Dashboard from './pages/dashboard/dashboard.jsx'
+import Overview from './components/overview/Overview.jsx'
+import Analytics from './components/analytics/Analytics.jsx';
+import Transactions from './components/transactions/Transactions.jsx';
+import Settings from './components/settings/Settings.jsx';
 
 function App() {
   

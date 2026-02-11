@@ -1,30 +1,55 @@
-.transactions-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: center;
-    height: 80%;
-    /* background-color: rgb(128, 104, 80); */
-    position: relative;
-    margin: 0;
-    border-radius: 1rem;
+.transactions-page-container {
+    width: inherit;
+    /* background-color: red; */
 }
 
 
+.transactions-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    position: relative;
+    margin: 0;
+    border-radius: 1rem;
+    /* background-color: blue; */
+}
+
 .transactions-bar {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    align-items: flex-start;
     justify-content: space-between;
     padding: 1rem;
-    /* background-color: red; */
+    border-radius: 1rem;
     width: 50rem;
 }
 
 .transactions-bar h1 {
     color: #393939;
 }
+.transaction-bar-buttons {
+    display: flex;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.transaction-bar-buttons button {
+    background-color: rgb(39, 39, 39);
+    color: rgb(255, 255, 255);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.transaction-bar-buttons button:hover {
+    background-color: rgb(83, 83, 83);
+}
 
 .search {
     /* background-color: blue; */
-    width: 20rem;
+    width: 100%;
+
 }

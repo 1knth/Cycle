@@ -36,9 +36,9 @@ function Card({type, name, data, kpi}) {
                     <div>{kpi}</div>
                     {/* <img src={settingsIcon}></img> */}
                 </div>
-                            <div className="action">
-                <button onClick={() => handleClick(name)}>configure</button>
-            </div>
+                <div className="action">
+                    {/* <button onClick={() => handleClick(name)}>configure</button> */}
+                </div>
             </div>
         </div>
     );

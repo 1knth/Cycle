@@ -111,6 +111,29 @@ function Overview() {
                     data={`$${metrics.averageTransaction}`}
                     kpi="All time"
                 />
+                <NumberCard
+                    type="regular"
+                    name="Avg Transaction"
+                    data={`$${metrics.averageTransaction}`}
+                    kpi="All time"
+                />
+                <NumberCard
+                    type="regular"
+                    name="Avg Transaction"
+                    data={`$${metrics.averageTransaction}`}
+                    kpi="All time"
+                />
+            </div>
+            <div className="cards-container-2">
+                <NumberCard
+                    type="graph"
+                    name="Portfolio"
+                />
+                <NumberCard
+                    type="graph"
+                    name="Spending Trend"
+                    kpi="Last 30 days"
+                />
             </div>
             <div className="recent-transactions-container">
                 <h1>Recent Transactions</h1>

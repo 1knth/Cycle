@@ -6,7 +6,7 @@
     height: 12rem;
     max-height: 80rem;
     overflow-y: auto;
-    padding: 5px;
+    scrollbar-color: #393939 #00000019;
     /* height: 3rem; */
 }
 
@@ -19,6 +19,7 @@
     max-height: 40vh;
     overflow-y: auto;
     padding: 5px;
+    scrollbar-color: #393939 #00000019;
     /* height: 3rem; */
 }
 
@@ -88,4 +89,14 @@
     font-style: italic;
     font-weight:600;
     color: #626262;;
+}
+
+/* Tablet screens */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .transactions-list-vertical {
+        width: 51rem;
+    }
+    .transactions-list-horizontal {
+        width: 51rem;
+    }
 }

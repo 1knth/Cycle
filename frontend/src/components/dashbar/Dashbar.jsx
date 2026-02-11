@@ -4,16 +4,16 @@ import overviewlogo from '../../assets/overviewlogo.png'
 
 function Dashbar() {
     const dashbarItems = [
-        {title: "Overview", path:"overview", id:5, picture: overviewlogo}, 
-        {title: "Analytics", path:"analytics", id:6}, 
-        {title: "Transactions", path:"transactions", id:7}, 
-        {title: "Settings", path:"settings", id:8}, 
+        {title: "Overview", path:"overview", key:5, picture: overviewlogo}, 
+        {title: "Analytics", path:"analytics", key:6}, 
+        {title: "Transactions", path:"transactions", key:7}, 
+        {title: "Settings", path:"settings", key:8}, 
     ]
 
     const listItems = dashbarItems.map(
         (item) => (
             <NavLink to={item.path} className={({isActive}) => isActive ? "dashbar-li-active" : "dashbar-li"}>
-                <li key={item.id}>{item.title}</li>
+                <li key={item.key}>{item.title}</li>
             </NavLink>
         )
     )

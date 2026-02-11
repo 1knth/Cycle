@@ -24,32 +24,3 @@
     border-radius: 1rem;
     width: 50rem;
 }
-
-.transactions-bar h1 {
-    color: #393939;
-}
-.transaction-bar-buttons {
-    display: flex;
-    gap: 0.5rem;
-    width: 100%;
-}
-
-.transaction-bar-buttons button {
-    background-color: rgb(39, 39, 39);
-    color: rgb(255, 255, 255);
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.transaction-bar-buttons button:hover {
-    background-color: rgb(83, 83, 83);
-}
-
-.search {
-    /* background-color: blue; */
-    width: 100%;
-
-}

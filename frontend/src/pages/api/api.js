@@ -30,21 +30,6 @@ export const getUser = async () => {
   return response.data;
 };
 
-// Transaction APIs
-export const getTransactions = async () => {
-  const response = await axios.get(`${API_URL}/api/plaid/transactions`, {
-    headers: getAuthHeaders(),
-  });
-  return response.data;
-};
-
-export const addTransaction = async (data) => {
-  const response = await axios.post(`${API_URL}/transactions/add`, data, {
-    headers: getAuthHeaders(),
-  });
-  return response.data;
-};
-
 // Plaid APIs
 export const createLinkToken = async () => {
   const response = await axios.post(`${API_URL}/api/plaid/create-link-token`, {}, {
@@ -58,6 +43,22 @@ export const exchangePublicToken = async (publicToken, metadata) => {
     public_token: publicToken,
     metadata,
   }, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
+
+// Transaction APIs
+export const getTransactions = async () => {
+  const response = await axios.get(`${API_URL}/api/plaid/transactions`, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
+export const addTransaction = async (data) => {
+  const response = await axios.post(`${API_URL}/transactions/add`, data, {
     headers: getAuthHeaders(),
   });
   return response.data;

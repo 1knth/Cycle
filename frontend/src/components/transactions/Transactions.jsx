@@ -31,25 +31,19 @@ function Transactions({type}) {
 
     if (loading) {
         return (
-            <section className="transactions-container">
-                <Spinner/>
-            </section>
+            <Spinner/>
         );
     }
 
     if (error) {
         return (
-            <section className="transactions-container">
-                <div style={{ color: 'red' }}>{error}</div>
-            </section>
+            <div style={{ color: 'red' }}>{error}</div>
         );
     }
 
     if (transactions.length === 0) {
         return (
-            <section className="transactions-container">
-                <div>No transactions found. Link your bank account to see transactions.</div>
-            </section>
+            <div>No transactions found. Link your bank account to see transactions.</div>
         );
     }
 

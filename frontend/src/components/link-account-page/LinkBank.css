@@ -1,16 +1,15 @@
 .Link-Plaid-Container {
-    height: 100%;
-    width: 100%;
-    /* background-color: red; */
     display: flex;
     justify-content: center;
     align-items: center;
+    height: 100%;
 }
 
 .Link-Plaid-Container .Card {
     background-color: rgb(94, 92, 89);
     color: rgb(255, 255, 255);
     width: 30rem;
+    height: 20rem;
     display: flex;
     flex-direction: column;
     justify-content: center;

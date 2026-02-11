@@ -8,8 +8,10 @@
     min-height: 10rem;
     margin: 0;
     padding: 1.5rem;
-    background-color: rgb(39, 39, 39);
-    color: rgb(255, 255, 255);
+    /* background-color: rgb(39, 39, 39); */
+    background-color: rgb(255, 251, 246);
+    /* color: rgb(255, 251, 245); */
+    color: #393939;
     border-radius: 25px;
     box-sizing: border-box;
 }
@@ -90,7 +92,7 @@
     display: flex;
     flex-direction: row;
     font-size: 1rem;
-    color: rgb(164, 255, 164);
+    color: #27ae60;
 }
 
 /* Mobile first - small screens */
@@ -154,7 +156,7 @@
 @media (min-width: 1025px) {
     .regular {
         width: 16rem;
-        height: 12rem;
+        height: 210px;
     }
     
     .chart {
@@ -189,3 +191,42 @@
         padding-top: 1rem;
     }
 }
+
+.action {
+    display: flex;
+    align-items: flex-end;
+    width: 100%;
+    margin-top: 1rem;
+    justify-content: center;
+}
+
+.action button {
+    height: 2rem;
+    width: 100%;
+    background-color: rgba(73, 73, 73, 0);
+    border: 2px solid #636363;
+    color: rgb(0, 0, 0);
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 300;
+    opacity: 40%;
+    transition: all 0.3s ease;
+}
+
+.action button:hover {
+    opacity: 80%;
+    background-color: rgba(73, 73, 73, 0);
+    color: rgb(0, 0, 0);
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 300;
+}
+
+.Card {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+

@@ -1,12 +1,12 @@
 import './NumberCard.css';
 import logo from '../../assets/logo.png';
 import settingsIcon from '../../assets/whiteSettingsIcon.svg';
-
+import { useState } from 'react';
 // import database query
 
 function Card({type, name, data, kpi}) {
 // Checks the gain/loss and updates the corresponding arrow direction on UI
-
+    const [settingsRouter, setSettingsRouter] = useState("");
     const flipArrow = () => {
         const monthlyspend = 0;
 
@@ -18,9 +18,12 @@ function Card({type, name, data, kpi}) {
             )
         }
     }
+    const handleClick = (name) => {
+        const id = name;
+    }
 
     return (
-        <div className={type}>
+        <div className={type} >
             <div className="card-text-container">
                 <div className="title">   
                     <p>{name}</p>
@@ -33,6 +36,9 @@ function Card({type, name, data, kpi}) {
                     <div>{kpi}</div>
                     {/* <img src={settingsIcon}></img> */}
                 </div>
+                            <div className="action">
+                <button onClick={() => handleClick(name)}>configure</button>
+            </div>
             </div>
         </div>
     );

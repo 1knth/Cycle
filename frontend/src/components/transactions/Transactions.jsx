@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { getTransactions } from '../../pages/api/api.js';
 import Spinner from '../loading-spinner/spinner.jsx';
 
-function Transactions() {
+function Transactions({type}) {
     const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -54,9 +54,8 @@ function Transactions() {
     }
 
     return (
-        <section className="transactions-container">
-            <h2>Transaction History</h2>
-            <div className="transactions-list">
+        <>
+            <div className={type}>
                 {transactions.map((transaction, index) => (
                     <div key={transaction.transaction_id || index} className="transaction-item">
                         <div className="transaction-header">
@@ -74,7 +73,7 @@ function Transactions() {
                     </div>
                 ))}
             </div>
-        </section>
+        </>
     )
 }
 

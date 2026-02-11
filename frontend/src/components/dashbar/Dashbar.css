@@ -22,7 +22,7 @@
     align-items: center;
     width: 10rem;
     height: 3rem;
-    color: rgb(169, 169, 169);
+    color: rgb(0, 0, 0);
     font-size: 20px;
     transition: 0.3s ease;
 }
@@ -43,7 +43,9 @@
     width: 10rem;
     height: 3rem;
     color: rgb(255, 255, 255);
-    background-color: rgb(24, 24, 24);
+    /* color: rgb(255, 255, 255); */
+    /* background-color: rgb(24, 24, 24); */
+    background-color: rgba(0, 0, 0, 0.315);
     border-radius: 10px;
     font-size: 20px;
 }

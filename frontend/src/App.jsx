@@ -5,7 +5,7 @@ import Auth from './pages/loginsignup/auth.jsx';
 import Dashboard from './pages/dashboard/dashboard.jsx'
 import Overview from './components/overview/Overview.jsx'
 import Analytics from './components/analytics/Analytics.jsx';
-import Transactions from './components/transactions/Transactions.jsx';
+import Transactions from './pages/transactions/transactions-page.jsx';
 import Settings from './components/settings/Settings.jsx';
 
 function App() {

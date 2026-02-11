@@ -6,7 +6,7 @@ import {useEffect, useState} from 'react';
 
 function Dashboard() {
     const navigate = useNavigate();
-    const logo = require('../../assets/whitename.png');
+    const logo = require('../../assets/blackname.png');
     // Check localStorage immediately for plaid status (set on login)
     const [plaidLinked, setPlaidLinked] = useState(() => {
         return localStorage.getItem("hasBankLinked") === "true";
@@ -21,8 +21,6 @@ function Dashboard() {
         return plaidLinked ? <Outlet/> : <LinkAccount onLinked={handleLinked}/>;
     };
 
-    const username = JSON.parse(localStorage.getItem("user"));
-
     return (
         <div>
             {/* the navbar at the top */}
@@ -32,10 +30,11 @@ function Dashboard() {
             <div className="dashboard-container">
                 <section className="dashboard">
                     <nav className="bar">
-                        <img className="dashboard-logo" src={logo} onClick={() => {navigate('/')}}></img>
-                                                <Dashbar/>
+                        <div className='logo-container'>
+                            <img className="dashboard-logo" src={logo} onClick={() => {navigate('/')}}></img>   
+                        </div>
+                        <Dashbar/>
                         <div className="user-info">
-                            <p> Welcome, {username?.username}</p>
                             <button onClick={() => {
                                 localStorage.removeItem("token");
                                 localStorage.removeItem("hasBankLinked");

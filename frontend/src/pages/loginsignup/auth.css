@@ -2,7 +2,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 88vh;
+    min-height: 100vh;
+    background: white;
 }
 
 .login-box {

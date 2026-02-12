@@ -1,5 +1,5 @@
-const Transaction = require('../models/transaction.model.js');
-const User = require('../models/user');
+const User = require('../models/user.js');
+const Transactions = require('../models/transaction.model.js')
 const { Configuration, PlaidApi, PlaidEnvironments } = require('plaid');
 require('dotenv').config();
 
@@ -38,17 +38,36 @@ exports.addTransaction = async (req, res) => {
 
 exports.getTransactions = async (req, res) => {
   try {
+    // 1. Get the user's access token from your DB
     const user = await User.findById(req.user._id);
-    const accessToken = user.plaidAccessToken;
+    if (!user || !user.plaidAccessToken) {
+      return res.status(400).json({ error: "User not linked to Plaid" });
+    }
 
+    // 2. Request transactions from Plaid
     const request = {
-      access_token: accessToken,
+      access_token: user.plaidAccessToken,
     };
-
+    
+    // Note: transactionsSync is for updates. 
+    // If you want history, you might need transactionsGet depending on your specific goal.
     const response = await plaidClient.transactionsSync(request);
+
+    // 3. Send the data back
     res.json(response.data);
+
   } catch (error) {
     console.error('Plaid Transactions Error:', error);
     res.status(500).json({ error: error.message });
   }
 };
+
+
+
+exports.readTransactions = async (req, res) => {
+  try {
+    // const response = await Transactions.
+  } catch (err) {
+    console.error(err);
+  }
+}

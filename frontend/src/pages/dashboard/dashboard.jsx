@@ -1,12 +1,21 @@
 import './dashboard.css';
 import { Outlet, useNavigate } from 'react-router-dom';
-import Dashbar from '../../components/dashbar/Dashbar.jsx'
 import LinkAccount from '../../components/link-account-page/LinkBank.jsx';
-import {useEffect, useState} from 'react';
+import {IsLoggedIn} from '../../components/context/context.jsx'
+import {useState, useEffect} from 'react';
+import Dashbar from '../../components/dashbar/Dashbar.jsx';
 
 function Dashboard() {
     const navigate = useNavigate();
-    const logo = require('../../assets/blackname.png');
+    useEffect(() => {
+        if (!IsLoggedIn()) {
+            navigate('/login')
+        }
+        if (plaidLinked) {
+            navigate('/dashboard/overview');
+        }
+    }, [])
+    
     // Check localStorage immediately for plaid status (set on login)
     const [plaidLinked, setPlaidLinked] = useState(() => {
         return localStorage.getItem("hasBankLinked") === "true";
@@ -17,36 +26,15 @@ function Dashboard() {
         localStorage.setItem("hasBankLinked", "true");
     };
 
-    const linked = () => {
-        return plaidLinked ? <Outlet/> : <LinkAccount onLinked={handleLinked}/>;
-    };
-
     return (
         <div>
-            {/* the navbar at the top */}
-
-            {/* PAGE UNDER THE NAVBAR */}
-            
             <div className="dashboard-container">
                 <section className="dashboard">
-                    <nav className="bar">
-                        <div className='logo-container'>
-                            <img className="dashboard-logo" src={logo} onClick={() => {navigate('/')}}></img>   
-                        </div>
-                        <Dashbar/>
-                        <div className="user-info">
-                            <button onClick={() => {
-                                localStorage.removeItem("token");
-                                localStorage.removeItem("hasBankLinked");
-                                localStorage.removeItem("user");
-                                navigate('/login');
-                            }}>Logout</button>
-                        </div>
-                    </nav>
+                    <Dashbar/>
                     <div className="dashboard-viewport">
                         {/* this is for the routes (DARKEST RECTANGLE | Viewport For Virtual DOM) */}
                         <section className="sections-container">
-                            {linked()}
+                            {plaidLinked ? <Outlet/> : <LinkAccount onLinked={handleLinked}/>} 
                         </section>
                     </div>
                 </section>

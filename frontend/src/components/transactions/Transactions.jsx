@@ -3,11 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { getTransactions } from '../../pages/api/api.js';
 import Spinner from '../loading-spinner/spinner.jsx';
 
-function Transactions({type}) {
+function Transactions({type, data}) {
     const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
     useEffect(() => {
         const fetchTransactions = async () => {
             try {
@@ -49,7 +48,7 @@ function Transactions({type}) {
 
     return (
         <>
-            <div className={type}>
+            {false ? <div className="hi"></div>: <div className={type}>
                 {transactions.map((transaction, index) => (
                     <div key={transaction.transaction_id || index} className="transaction-item">
                         <div className="transaction-header">
@@ -66,7 +65,7 @@ function Transactions({type}) {
                         </div>
                     </div>
                 ))}
-            </div>
+            </div>}
         </>
     )
 }

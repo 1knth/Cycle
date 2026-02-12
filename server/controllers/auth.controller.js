@@ -52,7 +52,7 @@ exports.login = async (req, res) => {
             process.env.JWT_SECRET,
             { expiresIn: 86400 } // 24 hours
         );
-
+        
         // 4. RESPOND: Send data back to React (including bank details)
         res.status(200).send({
             id: user._id,

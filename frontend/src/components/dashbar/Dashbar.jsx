@@ -1,8 +1,15 @@
-import './Dashbar.css';
+import React from 'react';
+import { useNavigate } from "react-router-dom";
+import {IsLoggedIn} from '../context/context.jsx'
+import './Dashbar.css'
 import { NavLink } from 'react-router-dom'; // handles link clicks
 import overviewlogo from '../../assets/overviewlogo.png'
 
-function Dashbar() {
+function Dashbar () {
+    const navigate = useNavigate();
+    const logo = require('../../assets/blackname.png');
+    
+    
     const dashbarItems = [
         {title: "Overview", path:"overview", key:5, picture: overviewlogo}, 
         {title: "Analytics", path:"analytics", key:6}, 
@@ -17,25 +24,38 @@ function Dashbar() {
             </NavLink>
         )
     )
-    // const button = () => {
-    //     let location = useLocation();
-    //     const navigate = useNavigate();
-    //     switch (location.pathname) {
-    //         case "overview": 
-    //             return (
-    //                 <div> 
-                        
-    //                 </div>
-    //             )
-    //     }
-
-    //     navigate('/dashboard/overview')
-    // }
-
+    
+    
+    
     return (
-        <div className="dashbar-container">
-            <ul className="dashbar-ul">{listItems}</ul>
-        </div>
+        <nav className="bar">
+            <div className='logo-container'>
+                <img className="dashboard-logo" src={logo} onClick={() => {navigate('/')}}></img>
+            </div>
+            { 
+                IsLoggedIn() ? (   
+                <div className="dashbar-container">
+                    <ul className="dashbar-ul">{listItems}</ul>
+                </div>
+                ) : (<div></div>)
+            }
+            <div className="user-info">
+                { IsLoggedIn() ?
+                    ( 
+                        <>
+                            <button onClick={() => {
+                                localStorage.removeItem("token");
+                                localStorage.removeItem("hasBankLinked");
+                                localStorage.removeItem("user");
+                                navigate('/login'); 
+                            }}> Logout </button> 
+                        </>
+                    ) 
+                    : 
+                    ( <span></span> )
+                }
+            </div>
+        </nav>
     )
 }
 

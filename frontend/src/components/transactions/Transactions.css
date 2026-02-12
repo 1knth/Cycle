@@ -2,7 +2,7 @@
     display: flex;
     flex-direction: row;
     gap: 10px;
-    width: 80rem;
+    max-width:75rem;
     height: 12rem;
     max-height: 80rem;
     overflow-y: auto;
@@ -97,6 +97,6 @@
         width: 51rem;
     }
     .transactions-list-horizontal {
-        width: 51rem;
+        width: 50rem;
     }
 }

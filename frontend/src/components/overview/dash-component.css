@@ -92,7 +92,7 @@
 }
 
 /* Tablet screens */
-@media (min-width: 769px) and (max-width: 1024px) {
+/* @media (min-width: 769px) and (max-width: 1024px) {
     .cards-container {
         height: auto;
         min-height: 10rem;
@@ -102,7 +102,7 @@
         height: auto;
         min-height: 20rem;
     }
-}
+} */
 
 .transactions-list-container {
     display: flex;
@@ -118,4 +118,26 @@
     /* background-color: red; */
     color: rgb(43, 41, 41);
     font-size: 0.8rem;
+}
+
+
+/* Mobile first - small screens */
+@media (max-width: 768px) {
+    .filter-bar p {
+        font-size: 1.8rem;
+    }
+}
+
+/* Tablet screens */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .cards-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .cards-container-2 {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 }

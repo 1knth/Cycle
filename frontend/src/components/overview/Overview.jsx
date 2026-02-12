@@ -57,10 +57,17 @@ function Overview() {
     };
 
     const metrics = useMemo(() => calculateMetrics(), [transactions]);
-
+    if (localStorage.getItem('token') == null) {
+        return (
+            <div>Not logged in</div>
+        )
+    }
     if (loading) {
         return (
-            <Spinner/>
+            <>
+                <Spinner/>
+                <div className="nothing"></div>
+            </>
         );
     }
 
@@ -134,8 +141,10 @@ function Overview() {
                     name="Spending Trend"
                     kpi="Last 30 days"
                 />
+                
             </div>
-            <div className="recent-transactions-container">
+            {/* <div className="recent-transactions-container"> */}
+            <div className="card-container">
                 <h1>Recent Transactions</h1>
                 <TransactionComponent 
                     type="transactions-list-horizontal"

@@ -13,9 +13,9 @@ function Signup() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [action, setAction] = useState("Signup");
-    var lever = () => action === "Signup" ? "Login" : "Sign Up";
-    var plever = () => action === "Signup" ? "Already a member? " : "Don't have an account? " ;
-    var b2uttonText = () => action === "Signup" ? "Sign Up" : "Enter";
+    let lever = () => action === "Signup" ? "Login" : "Sign Up";
+    let plever = () => action === "Signup" ? "Already a member? " : "Don't have an account? " ;
+    let b2uttonText = () => action === "Signup" ? "Sign Up" : "Enter";
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => { 
@@ -27,16 +27,16 @@ function Signup() {
         try {
             const response = await axios.post(endpoint, payload);
             const data = response.data;
-            localStorage.setItem("user", JSON.stringify(data));
-            localStorage.setItem("token", data.accessToken);
+            // localStorage.setItem("user", JSON.stringify(data));
+            // localStorage.setItem("token", data.accessToken);
             
             // Store bank details for immediate dashboard access
             if (data.hasBankLinked) {
-                localStorage.setItem("hasBankLinked", "true");
-                localStorage.setItem("plaidItemId", data.plaidItemId || "");
+                // localStorage.setItem("hasBankLinked", "true");
+                // localStorage.setItem("plaidItemId", data.plaidItemId || "");
             } else {
-                localStorage.setItem("hasBankLinked", "false");
-                localStorage.removeItem("plaidItemId");
+                // localStorage.setItem("hasBankLinked", "false");
+                // localStorage.removeItem("plaidItemId");
             }
             
             console.log("Success!", response.data);

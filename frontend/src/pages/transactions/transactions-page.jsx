@@ -3,7 +3,7 @@ import './transactions-page.css';
 import '../../components/overview/dash-component.css'; 
 import SearchBar from '../../components/SearchBar/SearchBar.jsx';
 import {useState, useEffect} from 'react';
-import {getTransactions} from '../api/api.js';
+import {readAllTransactions} from '../api/api.js';
 
 function TransactionsPage() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -15,16 +15,16 @@ function TransactionsPage() {
                     return;
             }
             try {
-                const transactions = await getTransactions();
+                const transactions = await readAllTransactions();
                 const filtered = transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
             } catch (error) {
                 console.error('Error fetching transactions:', error);
             }
         };
 
-        const delayDebounceFn = setTimeout(() => {
-            handleSearch();
-        }, 300);
+        // const delayDebounceFn = setTimeout(() => {
+        //     handleSearch();
+        // }, 300);
         // return () => clearTimeout(delayDebounceFn);
     // }, [searchTerm]);
 

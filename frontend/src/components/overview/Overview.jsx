@@ -1,7 +1,7 @@
 import '../../components/overview/dash-component.css';
 import NumberCard from "../cards/NumberCard.jsx"
 import React, {useState, useEffect, useMemo} from 'react';
-import { getTransactions } from '../../pages/api/api.js';
+import { readRecentTransactions } from '../../pages/api/api.js';
 import Spinner from '../loading-spinner/spinner.jsx';
 import TransactionComponent from '../transactions/Transactions.jsx';
 
@@ -14,10 +14,9 @@ function Overview() {
         const fetchTransactions = async () => {
             try {
                 setLoading(true);
-                const data = await getTransactions();
+                const data = await readRecentTransactions();
                 // Plaid returns transactions in data.added array
-                const transactionList = data.added || [];
-                setTransactions(transactionList);
+                setTransactions(data);
             } catch (err) {
                 console.error('Error fetching transactions:', err);
                 setError('Failed to load transactions');

@@ -1,6 +1,6 @@
 import './Transactions.css'
 import React, { useState, useEffect } from 'react';
-import { getTransactions } from '../../pages/api/api.js';
+import { readAllTransactions } from '../../pages/api/api.js';
 import Spinner from '../loading-spinner/spinner.jsx';
 
 function Transactions({type, data}) {
@@ -11,12 +11,10 @@ function Transactions({type, data}) {
         const fetchTransactions = async () => {
             try {
                 setLoading(true);
-                const data = await getTransactions();
-                // Plaid returns transactions in data.added array
-                const transactionList = data.added || [];
+                const data = await readAllTransactions();
                 // Sort by date descending (newest first)
-                transactionList.sort((a, b) => new Date(b.date) - new Date(a.date));
-                setTransactions(transactionList);
+                // data.sort((a, b) => new Date(b.date) - new Date(a.date));
+                setTransactions(data);
             } catch (err) {
                 console.error('Error fetching transactions:', err);
                 setError('Failed to load transactions');
@@ -58,9 +56,9 @@ function Transactions({type, data}) {
                             </span>
                         </div>
                         <div className="transaction-details">
-                            <div className="transaction-date">{transaction.date}</div>
+                            <div className="transaction-date"> { transaction.date.substring(0,10)} </div>
                             <span className="transaction-category">
-                                {transaction.category ? transaction.category.join(', ') : 'Uncategorized'}
+                                {transaction.personal_finance_category ? transaction.personal_finance_category.join(', ') : 'Uncategorized'}
                             </span>
                         </div>
                     </div>

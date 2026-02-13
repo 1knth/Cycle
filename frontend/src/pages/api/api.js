@@ -50,8 +50,14 @@ export const exchangePublicToken = async (publicToken, metadata) => {
 
 
 // Transaction APIs
-export const getTransactions = async () => {
-  const response = await axios.get(`${API_URL}/api/plaid/transactions`, {
+export const readRecentTransactions = async () => {
+  const response = await axios.get(`${API_URL}/transactions?limit=10`, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+export const readAllTransactions = async () => {
+  const response = await axios.get(`${API_URL}/transactions`, {
     headers: getAuthHeaders(),
   });
   return response.data;

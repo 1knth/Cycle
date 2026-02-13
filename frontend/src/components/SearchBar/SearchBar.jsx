@@ -21,8 +21,6 @@ function SearchBar() {
 
 
 
-
-
     return(
         <div className="search-container">
             <FaSearch className="search-icon"/>

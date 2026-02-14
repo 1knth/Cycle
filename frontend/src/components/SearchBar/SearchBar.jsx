@@ -1,7 +1,7 @@
 import {useEffect, useState}from 'react';
 import './SearchBar.css';
 import {FaSearch} from 'react-icons/fa';
-import {getTransactions} from '../../pages/api/api.js';
+import {readTransactions} from '../../pages/api/api.js';
 
 function SearchBar() {
     const [searchTerm, setSearchTerm] = useState('');

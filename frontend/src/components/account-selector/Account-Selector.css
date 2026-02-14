@@ -1,0 +1,108 @@
+.dropdown {
+    display: flex;
+    position: relative;
+    margin-top: 15rem;
+    width: 19rem;
+    background-color: rgba(82, 69, 58, 0.423);
+    backdrop-filter: blur(5px);
+    border-radius: 1rem;
+    z-index: 1;
+}
+.account-selector {
+    background-color: transparent !important;
+    border: 1.5px solid black !important;
+    color: black !important;
+    font-weight: 550 !important;
+}
+
+.accounts-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.7rem;
+    margin-top: 1rem;
+    padding: 0;
+    user-select: none;
+}
+.accounts-container h3{
+    color: rgb(255, 250, 245);
+}
+
+.accounts {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin: 1rem;
+    font-size: 1.2rem;
+    list-style-type: none;
+    max-height: 16rem;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    background-color: rgba(255, 255, 255, 0.091);
+    border-radius:0.5rem;
+    scrollbar-color: rgb(255, 255, 255) rgba(255, 255, 255, 0.041);
+}
+
+.account {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    transition: 0.1s ease;
+    border-radius: 0.5rem;
+    /* padding: 0.5rem 0 0.5rem 0; */
+    background-color: rgba(255, 255, 255, 0.272);
+    cursor:pointer;
+
+}
+
+.account:hover {
+    background-color: rgba(0, 0, 0, 0.456);
+}
+
+.account li {
+    color: white;
+    margin: 0.5rem 0.5rem 0.5rem 0.5rem;
+}
+
+/* mobile */
+@media (max-width: 768px) {
+    .dropdown {
+        position: relative;
+        margin-top: 15rem;
+        width: 25rem;
+    }
+
+    .accounts-container {
+        font-size: 2rem;
+    }
+
+
+    .accounts {
+        gap: 5px;
+        margin: 1rem;
+        font-size: 1.5rem;
+        max-height: 16rem;
+    }
+}
+
+/* Tablet screens */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .dropdown {
+        position: relative;
+        margin-top: 18rem;
+        width: 13rem;
+    }
+
+    .accounts-container {
+        font-size: 0.8rem;
+    }
+
+
+    .accounts {
+        gap: 5px;
+        margin: 1rem;
+        font-size: 0.9rem;
+        max-height: 16rem;
+    }
+}

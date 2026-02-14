@@ -7,6 +7,7 @@ import password_icon from '../../assets/password.png';
 import axios from 'axios';
 import Navbar from '../../components/navbar/Navbar';
 import { useNavigate } from 'react-router-dom';
+import { syncTransactions } from '../api/api.js';
 
 function Signup() {
     const [email, setEmail] = useState('');
@@ -27,19 +28,22 @@ function Signup() {
         try {
             const response = await axios.post(endpoint, payload);
             const data = response.data;
-            // localStorage.setItem("user", JSON.stringify(data));
-            // localStorage.setItem("token", data.accessToken);
             
-            // Store bank details for immediate dashboard access
-            if (data.hasBankLinked) {
-                // localStorage.setItem("hasBankLinked", "true");
-                // localStorage.setItem("plaidItemId", data.plaidItemId || "");
-            } else {
-                // localStorage.setItem("hasBankLinked", "false");
-                // localStorage.removeItem("plaidItemId");
-            }
+            // Store only JWT token - user data fetched fresh from /api/user/me
+            localStorage.setItem("token", data.accessToken);
             
             console.log("Success!", response.data);
+            
+            // Sync transactions from Plaid if user has bank linked
+            if (data.hasBankLinked) {
+                try {
+                    await syncTransactions();
+                    console.log("Transactions synced successfully");
+                } catch (syncErr) {
+                    console.error("Bank account not linked", syncErr);
+                    // Don't block navigation if sync fails
+                }
+            }
             
             navigate('/dashboard');
             

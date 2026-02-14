@@ -46,11 +46,11 @@ function Transactions({type, data}) {
 
     return (
         <>
-            {false ? <div className="hi"></div>: <div className={type}>
+            {false ? <div></div>: <div className={type}>
                 {transactions.map((transaction, index) => (
                     <div key={transaction.transaction_id || index} className="transaction-item">
                         <div className="transaction-header">
-                            <span className="transaction-name">{transaction.name}</span>
+                            <span className="transaction-name">{transaction.merchantName}</span>
                             <span className={`transaction-amount ${transaction.amount > 0 ? 'expense' : 'income'}`}>
                                 ${Math.abs(transaction.amount).toFixed(2)}
                             </span>

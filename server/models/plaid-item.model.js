@@ -8,7 +8,6 @@ const PlaidItemSchema = new mongoose.Schema({
         required: true 
     },
     
-    // The PERMANENT credentials (Encryption recommended in production)
     plaidAccessToken: { 
         type: String, required: true 
     },
@@ -16,15 +15,13 @@ const PlaidItemSchema = new mongoose.Schema({
         type: String, required: true 
     },
     
-    // Metadata for UI (e.g., "Chase", "TD Bank")
     institutionName: { 
         type: String 
     },
     institutionId: { 
         type: String 
-    }, // e.g., "ins_3"
+    },
     
-    // Status tracking (optional but good)
     status: { 
         type: String, default: 'good' 
     } 

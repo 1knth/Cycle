@@ -11,7 +11,6 @@ function Home () {
     }
 
     return (
-        // <img src=''></img>
         <div className="home-wrapper">
             <nav className="navbar-container">
                 <Navbar />
@@ -27,10 +26,11 @@ function Home () {
                 </div>
                 <div className="button-container">
                     <button className="reg-cta" onClick={button}>Try Demo &nbsp;&nbsp;&gt; </button>
-                    <button className="why-cta" onClick={button}>Why Cycle?</button>
+                    <a href="#target-why" className="why-cta">Why Cycle?</a>
                 </div>
                 <div className="card"><img src={card}></img></div>
             </section>
+            <div id="target-why"></div>
             <section className="about-section">
                 <div className="points-container">
                     <p className="points">

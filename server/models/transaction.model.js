@@ -4,14 +4,12 @@ const TransactionSchema = new mongoose.Schema({
     userId: { 
         type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true 
     },
+    accountId: String,
     plaidItemId: { 
         type: String, ref: 'PlaidItem' 
     },
     amount: Number,
-    category: {
-        primary: String,
-        secondary: String
-    },
+    category_id: String,
     date: Date,
     merchantName: String,
     plaidTransactionId: { 
@@ -19,4 +17,21 @@ const TransactionSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-module.exports = mongoose.model('Transaction', TransactionSchema);
+const Transactions = mongoose.model('Transaction', TransactionSchema);
+
+const MetricsSchema = new mongoose.Schema({
+    balance: Number,
+    spend: Number,
+    bills: Number,
+    avgtxn: Number,
+    annualDelta: {
+        balance: Number,
+        growth: Number,
+        percecntage: Number
+    },
+
+}, { timestamps: true });
+
+const Metrics = mongoose.model('Metric', MetricsSchema);
+
+module.exports = {Transactions, Metrics};

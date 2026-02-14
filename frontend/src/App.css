@@ -2,6 +2,10 @@
   text-decoration: none;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 .router-container {  
   background: rgb(228, 225, 222);
   min-height: 100vh;

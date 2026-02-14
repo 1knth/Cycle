@@ -1,0 +1,1 @@
+Cycle is a personal finance tracking app with in built functionality for xx forecasting. This project utilizes Plaid API for user financial data, MongoDB to securely store sensitive info, and xx model for forecasting.

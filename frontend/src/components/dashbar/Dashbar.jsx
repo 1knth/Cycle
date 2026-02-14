@@ -4,11 +4,20 @@ import {IsLoggedIn} from '../context/context.jsx'
 import './Dashbar.css'
 import { NavLink } from 'react-router-dom'; // handles link clicks
 import overviewlogo from '../../assets/overviewlogo.png'
+import {getUser} from '../../pages/api/api.js'
+import {useState, useEffect} from 'react';
 
 function Dashbar () {
     const navigate = useNavigate();
+    const [bankLinked, setBankLinked] = useState(null); 
     const logo = require('../../assets/blackname.png');
-    
+    useEffect(() => {
+        const auth = async () => {
+            const user = await getUser();
+            setBankLinked(user.hasBankLinked);
+            console.log(bankLinked);
+        }
+    },[setBankLinked])
     
     const dashbarItems = [
         {title: "Overview", path:"overview", key:5, picture: overviewlogo}, 

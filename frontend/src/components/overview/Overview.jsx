@@ -1,135 +1,205 @@
 import '../../components/overview/dash-component.css';
 import NumberCard from "../cards/NumberCard.jsx"
-import React, {useState, useEffect, useMemo} from 'react';
-import { readRecentTransactions } from '../../pages/api/api.js';
-import Spinner from '../loading-spinner/spinner.jsx';
+import { useState, useEffect } from 'react';
+import Spinner from '../loading-spinner/spinner.jsx'
+import { calculateMetrics, syncTransactions, getUser } from '../../pages/api/api.js';
+import { useAccount } from '../../components/context/context.jsx';
 import TransactionComponent from '../transactions/Transactions.jsx';
+import AccountSelector from '../account-selector/Account-Selector.jsx';
 
 function Overview() {
-    const [transactions, setTransactions] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-
+    const [metrics, setMetrics] = useState({});
+    const { accounts, selectedAccount, loading: accountsLoading, error: accountsError } = useAccount();
+    const [timeRange, setTimeRange] = useState('1M'); // Default to 1 month
+    const [metricsLoading, setMetricsLoading] = useState(true);
+    const [metricsError, setMetricsError] = useState(null);
+    const [username, setUsername] = useState("");
+    // Sync transactions and fetch user on load
     useEffect(() => {
-        const fetchTransactions = async () => {
+        const loadInitialData = async () => {
             try {
-                setLoading(true);
-                const data = await readRecentTransactions();
-                // Plaid returns transactions in data.added array
-                setTransactions(data);
-            } catch (err) {
-                console.error('Error fetching transactions:', err);
-                setError('Failed to load transactions');
-            } finally {
-                setLoading(false);
+                const user = await getUser();
+                setUsername(user.username)
+                localStorage.setItem("user",user.username);
+            } catch (syncErr) {
+                console.log('Initial sync may have failed:', syncErr.message);
             }
         };
 
-        fetchTransactions();
+        loadInitialData();
     }, []);
 
-    // Calculate metrics from transactions
-    const calculateMetrics = () => {
-        if (!transactions.length) {
-            return {
-                totalSpend: 0,
-                monthlySpend: 0,
-                transactionCount: 0,
-                averageTransaction: 0
-            };
-        }
-
-        const now = new Date();
-        const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
-
-        const totalSpend = transactions.reduce((sum, t) => sum + Math.abs(t.amount), 0);
-        const monthlyTransactions = transactions.filter(t => new Date(t.date) >= oneMonthAgo);
-        const monthlySpend = monthlyTransactions.reduce((sum, t) => sum + Math.abs(t.amount), 0);
-        const accountBalance = transactions.reduce((balance, t) => balance - t.amount, 0);
-        return {
-            totalSpend: totalSpend.toFixed(2),
-            monthlySpend: monthlySpend.toFixed(2),
-            transactionCount: transactions.length,
-            averageTransaction: (totalSpend / transactions.length).toFixed(2),
-            accountBalance: accountBalance,
+    // Fetch metrics when account or time range changes
+    useEffect(() => {
+        if (!selectedAccount) return;
+        
+        const updateMetrics = async () => {
+            try {
+                setMetricsLoading(true);
+                const metricsData = await calculateMetrics(selectedAccount.id, timeRange);
+                setMetrics(metricsData);
+                setMetricsError(null);
+            } catch (err) {
+                console.error('Error fetching metrics:', err);
+                setMetricsError('Failed to update metrics');
+            } finally {
+                setMetricsLoading(false);
+            }
         };
+
+        updateMetrics();
+    }, [selectedAccount, timeRange]);
+
+    const handleTimeRangeChange = (range) => {
+        setTimeRange(range);
     };
 
-    const metrics = useMemo(() => calculateMetrics(), [transactions]);
-    if (localStorage.getItem('token') == null) {
-        return (
-            <div>Not logged in</div>
-        )
+    // const handleRefresh = async () => {
+    //     try {
+    //         setLoading(true);
+    //         await syncTransactions();
+    //         // Refresh accounts in case new ones were added
+    //         const accountsData = await getAccounts();
+    //         setAccounts(accountsData.accounts || []);
+    //         setGroupedAccounts(accountsData.groupedByInstitution || {});
+    //         // Refresh metrics
+    //         const metricsData = await calculateMetrics(selectedAccount?.id, timeRange);
+    //         setMetrics(metricsData);
+    //     } catch (err) {
+    //         console.error('Error refreshing:', err);
+    //         setError('Failed to refresh data');
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+
+    const displayTimeRange = () => {
+        switch(timeRange) {
+            case '1W':
+                return "week"
+            
+            case '1M':
+                return "month"
+            
+            case '1Y':
+                return "year"
+        }
     }
-    if (loading) {
+
+    if (localStorage.getItem('token') == null) {
+        return <div>Not logged in</div>;
+    }
+
+    if (accountsLoading || metrics.totalTxn === undefined || username === "") {
         return (
-            <>
-                <Spinner/>
-                <div className="nothing"></div>
-            </>
+            <Spinner/>
         );
     }
 
-
-    if (error) {
+    if (accountsError || metricsError) {
         return (
             <section className="dash-component-container">
                 <div className="cards-container">
-                    <div style={{color: 'red'}}>{error}</div>
+                    <div style={{color: 'red', padding: '2rem'}}>
+                        <h3>Error Loading Data</h3>
+                        <p>{accountsError || metricsError}</p>
+                        <button 
+                            onClick={() => window.location.reload()} 
+                            style={{marginTop: '1rem', padding: '0.5rem 1rem'}}
+                        >
+                            Retry
+                        </button>
+                    </div>
                 </div>
             </section>
         );
     }
-    const username = JSON.parse(localStorage.getItem("user"));
+
+    // Show message if no accounts linked
+    if (accounts.length === 0 && !accountsLoading) {
+        return (
+            <section className="dash-component-container">
+                <div className="cards-container">
+                    <div style={{padding: '2rem', textAlign: 'center'}}>
+                        <h3>No Bank Accounts Linked</h3>
+                        <p>Please link a bank account to view your financial data.</p>
+                    </div>
+                </div>
+            </section>
+        );
+    }
+
     return (
         <>
         <section className="dash-component-container">
             <div className="filter-bar">
-                <p> Welcome, {username?.username}</p>
+                <div className="welcome-text">
+                    <p>Welcome,</p>
+                    <p>{username?.charAt(0).toUpperCase() + username?.slice(1) || "User"}</p>
+                </div>
                 <div className="filter-buttons">
-                    <button className="">1W</button>
-                    <button className="">1M</button>
-                    <button className="">1Y</button>
+                    {/* Account Selector */}
+                    <AccountSelector/>
+                    
+                    {/* Time Range Filters */}
+                    <button 
+                        className={timeRange === '1W' ? 'active' : ''}
+                        onClick={() => handleTimeRangeChange('1W')}
+                    >
+                        1W
+                    </button>
+                    <button 
+                        className={timeRange === '1M' ? 'active' : ''}
+                        onClick={() => handleTimeRangeChange('1M')}
+                    >
+                        1M
+                    </button>
+                    <button 
+                        className={timeRange === '1Y' ? 'active' : ''}
+                        onClick={() => handleTimeRangeChange('1Y')}
+                    >
+                        1Y
+                    </button>
+                    <button 
+                        className={timeRange === 'ALL' ? 'active' : ''}
+                        onClick={() => handleTimeRangeChange('ALL')}
+                    >
+                        ALL
+                    </button>
+                    
+                    <button className="refresh-btn">
+                        Refresh
+                    </button>
                 </div>
             </div>
+            
             <div className="cards-container">
                 <NumberCard
                     type="regular"
-                    name="Account Balance"
-                    data={`$${metrics.accountBalance.toFixed(2)}`}
-                    kpi="All time"
+                    name="Balance"
+                    data={`$${Intl.NumberFormat("en-US", {maximumFractionDigits: 2, minimumFractionDigits: 2}).format(metrics.balance)}` || 0}
+                    kpi="Current"
                 />
                 <NumberCard
                     type="regular"
-                    name="Total Transactions"
-                    data={metrics.transactionCount.toString()}
-                    kpi="All time"
+                    name="Transactions"
+                    data={`${metrics.totalTxn}` || 0}
+                    kpi={timeRange === 'ALL' ? 'All time' : `Last ${displayTimeRange()}`}
                 />
                 <NumberCard
                     type="regular"
-                    name="Monthly Spend"
-                    data={`$${metrics.monthlySpend}`}
-                    kpi="Last 30 days"
-                />
-                <NumberCard
-                    type="regular"
-                    name="Avg Transaction"
-                    data={`$${metrics.averageTransaction}`}
-                    kpi="All time"
+                    name="Total Spend"
+                    data={`$${Intl.NumberFormat("en-US", {maximumFractionDigits: 2, minimumFractionDigits: 2}).format(metrics.totalSpend)}` || 0}
+                    kpi={timeRange === 'ALL' ? 'All time' : `Last ${displayTimeRange()}`}
                 />
                 <NumberCard
                     type="regular"
                     name="Avg Transaction"
-                    data={`$${metrics.averageTransaction}`}
-                    kpi="All time"
-                />
-                <NumberCard
-                    type="regular"
-                    name="Avg Transaction"
-                    data={`$${metrics.averageTransaction}`}
-                    kpi="All time"
+                    data={`$${Intl.NumberFormat("en-US", {maximumFractionDigits: 2, minimumFractionDigits: 2}).format(metrics.avgTxn)}` || 0}
+                    kpi={timeRange === 'ALL' ? 'All time' : `Last ${displayTimeRange()}`}
                 />
             </div>
+            
             <div className="cards-container-2">
                 <NumberCard
                     type="graph"
@@ -138,11 +208,10 @@ function Overview() {
                 <NumberCard
                     type="graph"
                     name="Spending Trend"
-                    kpi="Last 30 days"
+                    kpi="Analytics"
                 />
-                
             </div>
-            {/* <div className="recent-transactions-container"> */}
+            
             <div className="card-container">
                 <h1>Recent Transactions</h1>
                 <TransactionComponent 
@@ -150,17 +219,8 @@ function Overview() {
                 />
             </div>
         </section>
-        <section className="transactions-overview-container">
-            {/* <NumberCard
-                type="list"
-                name="Recent Transactions"
-                data={transactions.slice(0, 5).map(t =>
-                    `${t.name}: $${Math.abs(t.amount).toFixed(2)}`
-                ).join('\n')}
-            /> */}
-        </section>
         </>
-    )
+    );
 }
 
 export default Overview;

@@ -32,7 +32,6 @@ exports.signup = async (req, res) => {
 exports.login = async (req, res) => {
     try {
         const user = await User.findOne({ username: req.body.username });
-        console.log(user);
         if (!user) {
             return res.status(401).send({ message: "Invalid username or password." });
         }
@@ -40,9 +39,6 @@ exports.login = async (req, res) => {
         // 2. COMPARE: Check if the password matches the hash
         // node js is singled threaded, use await bc of compare(sync) -> e.g stops for 100-300ms
         const passwordIsValid = await bcrypt.compareSync(req.body.password, user.password);
-        console.log(req.body);
-        console.log(req.body.password);
-        console.log(user.password);
         if (!passwordIsValid) {
             return (
                 res.status(401).send({accessToken: null, message: "Invalid Password!"})
@@ -55,7 +51,6 @@ exports.login = async (req, res) => {
             process.env.JWT_SECRET,
             { expiresIn: 86400 } // 24 hours
         );
-        console.log(token);
         // 4. RESPOND: Send data back to React (including bank details)
         res.status(200).send({
             id: user._id,
@@ -87,4 +82,23 @@ exports.verifyToken = (req, res, next) => {
         req.user = { _id: decoded.id };
         next();
     });
+};
+
+exports.getMe = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        if (!user) {
+            return res.status(404).send({ message: 'User not found' });
+        }
+
+        res.status(200).send({
+            id: user._id,
+            username: user.username,
+            email: user.email,
+            plaidItemId: user.plaidItemId || null,
+            hasBankLinked: !!user.plaidAccessToken
+        });
+    } catch (err) {
+        res.status(500).send({ message: err.message });
+    }
 };

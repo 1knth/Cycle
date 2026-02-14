@@ -43,21 +43,27 @@ span {
     gap: 1rem;
 }
 
-.why-cta{
+.hero-container .why-cta{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 20px solid black;
     border-width: 0.05rem;
-    background-color: #ffffff;
-    width: 8rem;
-    height: 4em;
+    color: black;
+    background-color: transparent;
+    width: 6rem;
+    height: 2rem;
     border-radius: 4px;
     padding-left: 20px;
     padding-right: 20px;
     padding-top: 10px;
     padding-bottom: 10px;
     user-select: none;
-    transition: 0.3s ease;
+    transition: 0.2s ease;
 }
 
 .why-cta:hover{
+    border-color: #00000000;
     background-color: #545e72;
     color: rgb(255, 255, 255);
     cursor: pointer;

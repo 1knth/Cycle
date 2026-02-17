@@ -3,7 +3,9 @@ const bcrypt = require("bcryptjs");
 const jwt = require('jsonwebtoken');
 
 exports.signup = async (req, res) => {
+    //input validation
     const {username, email, password} = req.body;
+    
     
     try {
         const user = await User.create({

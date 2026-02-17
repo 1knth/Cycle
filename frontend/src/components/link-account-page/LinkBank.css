@@ -1,22 +1,36 @@
 .Link-Plaid-Container {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-}
-
-.Link-Plaid-Container .Card {
-    background-color: rgb(94, 92, 89);
-    color: rgb(255, 255, 255);
-    width: 30rem;
-    height: 20rem;
-    display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 1rem;
-    border-radius: 1rem;
-    padding: 2rem
+    height: 100vh;
+}
+
+.card-text-container {
+    display: flex;
+    justify-content: center;;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border: 3px solid rgba(182, 182, 182, 0.258);
+    padding: 1rem;
+    border-radius:0.4rem;
+    background:rgba(255, 251, 244, 0.81);
+    filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.286));
+}
+.Link-Plaid-Container .Card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* background-color: rgb(94, 92, 89); */
+    color: rgb(41, 41, 41);
+    width: 30rem;
+    height: fit-content;
+    border-radius: 0.4rem;
 }
 
 .Link-Plaid-Container .Card h1 {
@@ -24,6 +38,8 @@
     font-weight: 600;
 }
 .Link-Plaid-Container .Card p {
-    font-size: 1.1rem;
-    font-weight: 400;
+    /* filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.795)); */
+    color: rgb(25, 195, 22);
+    font-size: 1.2rem;
+    font-weight: 500;
 }

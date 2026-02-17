@@ -21,6 +21,10 @@ const UserSchema = new mongoose.Schema({
     plaidItemId: {
         type: String,
     },
+    plaidCursor: {
+        type: String,
+        default: null
+    },
     lastSync: {
         type: Date,
     }

@@ -14,24 +14,30 @@ const TransactionSchema = new mongoose.Schema({
     merchantName: String,
     plaidTransactionId: { 
         type: String, unique: true 
+    },
+    pending: {
+        type: Boolean,
+        default: false
     }
 }, { timestamps: true });
+TransactionSchema.index({ userId: 1, date: -1 });
+TransactionSchema.index({ plaidTransactionId: 1 });
 
 const Transactions = mongoose.model('Transaction', TransactionSchema);
 
-const MetricsSchema = new mongoose.Schema({
-    balance: Number,
-    spend: Number,
-    bills: Number,
-    avgtxn: Number,
-    annualDelta: {
-        balance: Number,
-        growth: Number,
-        percecntage: Number
-    },
+// const MetricsSchema = new mongoose.Schema({
+//     balance: Number,
+//     spend: Number,
+//     bills: Number,
+//     avgtxn: Number,
+//     delta: {
+//         spending: [],
+//         growth: Number,
+//         percentage: Number
+//     },
 
-}, { timestamps: true });
+// }, { timestamps: true });
 
-const Metrics = mongoose.model('Metric', MetricsSchema);
+// const Metrics = mongoose.model('Metric', MetricsSchema);
 
-module.exports = {Transactions, Metrics};
+module.exports = {Transactions};

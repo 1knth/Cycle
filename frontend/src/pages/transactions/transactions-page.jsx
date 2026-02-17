@@ -3,7 +3,7 @@ import './transactions-page.css';
 import '../../components/overview/dash-component.css'; 
 import SearchBar from '../../components/SearchBar/SearchBar.jsx';
 import {useState, useEffect} from 'react';
-import {readAllTransactions} from '../api/api.js';
+import {readTransactions} from '../api/api.js';
 
 function TransactionsPage() {
     const [searchTerm, setSearchTerm] = useState('');
@@ -15,7 +15,7 @@ function TransactionsPage() {
                     return;
             }
             try {
-                const transactions = await readAllTransactions();
+                const transactions = await readTransactions();
                 const filtered = transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
             } catch (error) {
                 console.error('Error fetching transactions:', error);
@@ -37,7 +37,7 @@ function TransactionsPage() {
                 </div>
                 <Transactions
                     type="transactions-list-vertical"
-                    data={results}
+                    amount="all"
                 />
             </div>
         </section>

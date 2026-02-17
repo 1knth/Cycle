@@ -24,7 +24,8 @@
 }
 
 .transaction-item {
-    background: white;
+    background-color: rgb(255, 251, 247);
+    /* background: white; */
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     padding: 2rem;
@@ -33,7 +34,7 @@
 
 .transaction-item:hover {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    background-color: #cbcbcb;
+    background-color: #ccccccda;
 }
 
 .transaction-header {
@@ -47,7 +48,7 @@
 .transaction-name {
     font-weight: 800;
     font-size: 1.5em;
-    color: #000000;
+    color: #393939;
     width: 15rem;
 }
 

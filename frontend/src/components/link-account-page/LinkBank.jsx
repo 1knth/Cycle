@@ -6,15 +6,19 @@ function LinkAccount({ onLinked }) {
 
     return (
         <>
-            {IsLoggedIn() ?
-                (<section className="Link-Plaid-Container">
+            {IsLoggedIn() 
+            ? (<section className="Link-Plaid-Container">
                     <div className='Card'>
-                        <h1>Link Your Transaction History</h1>
-                        {<PlaidLinkButton onLinked={onLinked}/>}
-                        <p>Supported by over 100+ banks!</p>
+                        <div className="wrapper">
+                            <div className="card-text-container">                           
+                                <h1>Link Transactions</h1>
+                                <p>Supported by over 100+ banks!</p>
+                            </div>
+                        {   <PlaidLinkButton onLinked={onLinked}/>}
+                        </div>
                     </div>
                 </section> )
-                :
+            :
                 (<div></div>) 
             }
         </>

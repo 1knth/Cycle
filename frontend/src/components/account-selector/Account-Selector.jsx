@@ -27,73 +27,22 @@ const AccountSelector = () => {
     }
 
     return (
-        // <div className="account-selector-wrapper">
-        //     <button 
-        //         className="account-selector-btn"
-        //         onClick={() => setShowDropdown(!showDropdown)}
-        //     >
-        //         {formatAccountDisplay(selectedAccount)}
-        //         <span className="dropdown-arrow">▼</span>
-        //     </button>
-            
-        //     {showDropdown && (
-        //         <div className="account-dropdown">
-        //             {/* All Accounts Option */}
-        //             <div 
-        //                 className={`account-option ${selectedAccount?.id === 'all' ? 'selected' : ''}`}
-        //                 onClick={() => handleAccountSelect({ id: 'all', name: 'All Accounts' })}
-        //             >
-        //                 <h2 className="account-name">All Accounts</h2>
-        //             </div>
-                    
-        //             {/* Grouped by Institution */}
-        //             {Object.entries(groupedAccounts).map(([institution, instAccounts]) => (
-        //                 <div key={institution} className="institution-group">
-        //                     <div className="institution-name">{institution}</div>
-        //                     {instAccounts
-        //                         .sort((a, b) => (a.type || '').localeCompare(b.type || ''))
-        //                         .map(account => (
-        //                         <div
-        //                             key={account.id}
-        //                             className={`account-option ${selectedAccount?.id === account.id ? 'selected' : ''}`}
-        //                             onClick={() => handleAccountSelect(account)}
-        //                         >
-        //                             <span className="account-name">
-        //                                 {account.name} ...{account.mask}
-        //                             </span>
-        //                             <span className="account-balance">
-        //                                 ${account.currentBalance?.toFixed(2) || '0.00'}
-        //                             </span>
-        //                         </div>
-        //                     ))}
-        //                 </div>
-        //             ))}
-        //         </div>
-        //     )}
-        // </div>
-
-
         <>
             {selection ? 
             <div className='dropdown' >
                 <div className="accounts-container">
-                    <h3>Accounts</h3>
                     <div className="accounts">
-                        <div onClick={() => handleAccountSelect(
-                            {
-                                name: "All Accounts",
-                            }   
-                            )} className="account">
-                            <li>All Accounts</li>
+                        <div onClick={() => handleAccountSelect({name: "All Accounts", id: "all"})} className="account">
+                            <li style={{fontWeight: 600, fontSize: 1.4 + 'rem'}}>All Accounts</li>
                         </div>
                         {listAccounts}
                     </div>
                 </div>
-            
             </div>
             :
-            <button className="account-selector" onClick={() => setSelection(true)} > {selectedAccount?.name} {selectedAccount?.mask}</button>
+            <div></div>
             }
+            <button className="account-selector" onClick={() => setSelection(true)} > {selectedAccount?.name} {selectedAccount?.mask}</button>
         </>
     )
 }

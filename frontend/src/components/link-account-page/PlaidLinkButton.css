@@ -1,16 +1,23 @@
 #link-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     height: 2rem;
     width: 10rem;
     background-color: rgb(242, 242, 242);
     color: black;
     font-size: 1rem;
     font-weight: 500;
-    transition: 0.3s ease;
-    border-style:none;
+    transition: 0.2s ease;
+    border: 1.2px solid rgba(0, 0, 0, 0.083);
+    /* border-style:none; */
     border-radius:5px;
+    filter:drop-shadow(0 0 10px rgba(0, 0, 0, 0.227));
+    cursor: pointer;
 }
 
 #link-button:hover {
-    cursor: pointer;
-    background-color: rgb(255, 223, 169);
+    background-color: rgb(224, 224, 224);
+    /* color: white; */
+    /* translate: 20px 20px; */
 }

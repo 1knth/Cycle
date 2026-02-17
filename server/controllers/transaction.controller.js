@@ -2,6 +2,7 @@ const { Transactions } = require('../models/transaction.model.js');
 const Account = require('../models/account.model.js');
 const User = require('../models/user');
 const { Configuration, PlaidApi, PlaidEnvironments } = require('plaid');
+const { calculateMetrics } = require('../services/transaction.service.js')
 require('dotenv').config();
 
 const configuration = new Configuration({
@@ -48,7 +49,9 @@ const syncAccountsFromPlaid = async (userId) => {
       }
     }
 
-    // Save/update each account
+    // Save/update each account 
+    // not using bulkwrite because a user rarely has more than 10 bank accounts
+
     for (const account of accounts) {
       await Account.findOneAndUpdate(
         { plaidAccountId: account.account_id },
@@ -83,47 +86,128 @@ const syncAccountsFromPlaid = async (userId) => {
 exports.getTransactions = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
-    
+
     if (!user || !user.plaidAccessToken) {
       return res.status(400).json({ error: 'No bank account linked' });
     }
 
-    // Sync accounts first
-    await syncAccountsFromPlaid(req.user._id);
-
+    // 1. Fetch "Sync" Data from Plaid
+    // We pass the 'cursor' so Plaid only gives us what changed since last time.
     const response = await plaidClient.transactionsSync({
       access_token: user.plaidAccessToken,
+      cursor: user.plaidCursor || null, // <--- CRITICAL: Send the last cursor
+      count: 500 // Max items per page
     });
-    
-    const newTransactions = response.data.added;
 
-    for (const t of newTransactions) {
-      await Transactions.findOneAndUpdate(
-        { plaidTransactionId: t.transaction_id },
-        {
-          $set: {
-            amount: t.amount,
-            date: t.date,
-            merchantName: t.merchant_name || 'Unknown',
-            category: t.personal_finance_category?.primary || 'Uncategorized',
-            accountId: t.account_id
-          },
-          $setOnInsert: {
-            userId: user._id,
-            plaidItemId: user.plaidItemId,
-            plaidTransactionId: t.transaction_id
-          }
-        },
-        { upsert: true, new: true, setDefaultOnInsert: true }
-      );
+    const { added, modified, removed, next_cursor } = response.data;
+
+    // 2. Prepare Database Operations (BulkWrite)
+    const operations = [];
+
+    // HANDLE ADDED + MODIFIED (They act the same: Upsert)
+    const transactionsToUpdate = [...added, ...modified];
+    
+    transactionsToUpdate.forEach(t => {
+      operations.push(
+      {
+        updateOne: {
+          filter: { plaidTransactionId: t.transaction_id }, // Find by Plaid ID
+          update: {
+            $set: {
+              amount: t.amount,
+              date: t.date,
+              merchantName: t.merchant_name || t.merchantName || 'Unknown',
+              category: t.personal_finance_category || 'Uncategorized',
+              accountId: t.account_id,
+              pending: t.pending, // Important for updates!
+              // Any other fields you want to update...
+            },
+            $setOnInsert: {
+              userId: user._id,
+              plaidItemId: t.item_id, // Usually matches user.plaidItemId
+              plaidTransactionId: t.transaction_id
+            }
+          }, upsert: true 
+        }
+      });
+    });
+
+    // HANDLE REMOVED (Delete from DB)
+    removed.forEach(t => {
+      operations.push({
+        deleteOne: {
+          filter: { plaidTransactionId: t.transaction_id }
+        }
+      });
+    });
+
+    // 3. Execute Bulk Write (One big fast request)
+    if (operations.length > 0) {
+      await Transactions.bulkWrite(operations);
     }
 
-    res.json({ success: true, count: newTransactions.length });
+    // 4. SAVE THE CURSOR (Crucial!)
+    // Next time, we start from here.
+    user.plaidCursor = next_cursor;
+    await user.save();
+
+    res.json({ 
+      success: true, 
+      added: added.length, 
+      modified: modified.length, 
+      removed: removed.length 
+    });
+
   } catch (error) {
     console.error('Error in getTransactions:', error);
     res.status(500).json({ error: error.message });
   }
 };
+
+// exports.getTransactions = async (req, res) => {
+//   try {
+//     const user = await User.findById(req.user._id);
+    
+//     if (!user || !user.plaidAccessToken) {
+//       return res.status(400).json({ error: 'No bank account linked' });
+//     }
+
+//     // Sync accounts first
+//     await syncAccountsFromPlaid(req.user._id);
+
+//     const response = await plaidClient.transactionsSync({
+//       access_token: user.plaidAccessToken,
+//     });
+    
+//     const newTransactions = response.data.added;
+
+//     for (const t of newTransactions) {
+//       await Transactions.findOneAndUpdate(
+//         { plaidTransactionId: t.transaction_id },
+//         {
+//           $set: {
+//             amount: t.amount,
+//             date: t.date,
+//             merchantName: t.merchant_name || 'Unknown',
+//             category: t.personal_finance_category?.primary || 'Uncategorized',
+//             accountId: t.account_id
+//           },
+//           $setOnInsert: {
+//             userId: user._id,
+//             plaidItemId: user.plaidItemId,
+//             plaidTransactionId: t.transaction_id
+//           }
+//         },
+//         { upsert: true, new: true, setDefaultOnInsert: true }
+//       );
+//     }
+
+//     res.json({ success: true, count: newTransactions.length });
+//   } catch (error) {
+//     console.error('Error in getTransactions:', error);
+//     res.status(500).json({ error: error.message });
+//   }
+// };
 
 exports.readTransactions = async (req, res) => {
   try {
@@ -199,89 +283,9 @@ exports.calculateMetrics = async (req, res) => {
     const userId = req.user._id;
     const accountId = req.query.accountId;
     const timeRange = req.query.timeRange || '1M';
-
-    // Build query
-    const queryFilter = { userId: userId };
-    
-    if (accountId && accountId !== 'all') {
-      queryFilter.accountId = accountId;
-    }
-
-    // Time range filter
-    const now = new Date();
-    let startDate = null;
-
-    switch(timeRange) {
-      case '1W':
-        startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-        break;
-      case '1M':
-        startDate = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
-        break;
-      case '1Y':
-        startDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
-        break;
-      default:
-        startDate = null;
-    }
-
-    if (startDate) {
-      queryFilter.date = { $gte: startDate };
-    }
-
-    const transactions = await Transactions.find(queryFilter).sort({ date: -1 });
-
-    // Get balance
-    let balance = 0;
-    if (accountId && accountId !== 'all') {
-      const account = await Account.findOne({ 
-        userId: userId, 
-        plaidAccountId: accountId 
-      });
-      balance = account?.currentBalance || 0;
-    } else {
-      // Sum all account balances
-      const allAccounts = await Account.find({ userId: userId });
-      balance = allAccounts.reduce((sum, acc) => sum + (acc.currentBalance || 0), 0);
-    }
-
-    if (transactions.length === 0) {
-      return res.json({
-        transactions: false,
-        totalTxn: 0,
-        balance: balance,
-        totalSpend: 0,
-        avgTxn: 0,
-        monthlySpend: 0
-      });
-    }
-
-    let totalSpend = 0;
-    
-    for (const t of transactions) {
-      if (t.amount < 0) {
-        totalSpend += Math.abs(t.amount);
-      }
-    }
-    const avgTxn = totalSpend / transactions.length;
-
-    // Monthly spend (current month)
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const monthlyTransactions = transactions.filter(t => new Date(t.date) >= startOfMonth);
-    const monthlySpend = monthlyTransactions.reduce((sum, t) => {
-      return t.amount < 0 ? sum + Math.abs(t.amount) : sum;
-    }, 0);
-
-    res.json({
-      transactions: true,
-      totalTxn: transactions.length,
-      balance: balance,
-      totalSpend: totalSpend,
-      avgTxn: avgTxn,
-      monthlySpend: monthlySpend,
-    });
+    const result = await calculateMetrics(userId, accountId, timeRange)
+    res.json(result);
   } catch (err) {
-    console.error('Error in calculateMetrics:', err);
     res.status(500).json({ error: "Calculation error: " + err.message });
   }
 };

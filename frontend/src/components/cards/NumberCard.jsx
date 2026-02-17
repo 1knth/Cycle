@@ -4,7 +4,7 @@ import settingsIcon from '../../assets/whiteSettingsIcon.svg';
 import { useState } from 'react';
 // import database query
 
-function Card({type, name, data, kpi}) {
+function Card({type, name, data, kpi, kpi2}) {
 // Checks the gain/loss and updates the corresponding arrow direction on UI
     const [settingsRouter, setSettingsRouter] = useState("");
     const flipArrow = () => {
@@ -34,7 +34,12 @@ function Card({type, name, data, kpi}) {
                 </div>
                 <div className="kpi">
                     <div>{kpi}</div>
-                    {/* <img src={settingsIcon}></img> */}
+
+                    {type != "regular" 
+                    ? <p>|</p> 
+                    : <></>}
+
+                    <div>{kpi2}</div>
                 </div>
                 <div className="action">
                     {/* <button onClick={() => handleClick(name)}>configure</button> */}

@@ -167,6 +167,7 @@
 }
 
 .refresh-btn {
+    display: flex;
     opacity: 85% !important;
 }
 

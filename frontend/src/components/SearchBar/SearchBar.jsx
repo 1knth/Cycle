@@ -10,7 +10,6 @@ function SearchBar() {
 
         try {
             
-
         } catch (err) {
             console.error(err);
         }

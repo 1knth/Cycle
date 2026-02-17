@@ -1,9 +1,10 @@
 import './Transactions.css'
 import React, { useState, useEffect } from 'react';
-import { readAllTransactions } from '../../pages/api/api.js';
+import { readTransactions } from '../../pages/api/api.js';
 import Spinner from '../loading-spinner/spinner.jsx';
+import { IsLoggedIn } from '../context/context.jsx';
 
-function Transactions({type, data}) {
+function Transactions({type, amount}) {
     const [transactions, setTransactions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -11,9 +12,9 @@ function Transactions({type, data}) {
         const fetchTransactions = async () => {
             try {
                 setLoading(true);
-                const data = await readAllTransactions();
+                const data = await readTransactions(parseInt(amount));
                 // Sort by date descending (newest first)
-                // data.sort((a, b) => new Date(b.date) - new Date(a.date));
+                data.sort((a, b) => new Date(b.date) - new Date(a.date));
                 setTransactions(data);
             } catch (err) {
                 console.error('Error fetching transactions:', err);
@@ -46,7 +47,7 @@ function Transactions({type, data}) {
 
     return (
         <>
-            {false ? <div></div>: <div className={type}>
+            {IsLoggedIn() ? <div className={type}>
                 {transactions.map((transaction, index) => (
                     <div key={transaction.transaction_id || index} className="transaction-item">
                         <div className="transaction-header">
@@ -63,7 +64,7 @@ function Transactions({type, data}) {
                         </div>
                     </div>
                 ))}
-            </div>}
+            </div> : <div></div>}
         </>
     )
 }

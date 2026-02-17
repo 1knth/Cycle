@@ -6,6 +6,8 @@ import { calculateMetrics, syncTransactions, getUser } from '../../pages/api/api
 import { useAccount } from '../../components/context/context.jsx';
 import TransactionComponent from '../transactions/Transactions.jsx';
 import AccountSelector from '../account-selector/Account-Selector.jsx';
+import Chart from '../charts/Charts.jsx';
+import refresh from '../../assets/refresh.svg'
 
 function Overview() {
     const [metrics, setMetrics] = useState({});
@@ -14,7 +16,9 @@ function Overview() {
     const [metricsLoading, setMetricsLoading] = useState(true);
     const [metricsError, setMetricsError] = useState(null);
     const [username, setUsername] = useState("");
-    // Sync transactions and fetch user on load
+    const [spending, setSpending] = useState([]);
+    
+
     useEffect(() => {
         const loadInitialData = async () => {
             try {
@@ -42,9 +46,7 @@ function Overview() {
             } catch (err) {
                 console.error('Error fetching metrics:', err);
                 setMetricsError('Failed to update metrics');
-            } finally {
-                setMetricsLoading(false);
-            }
+            } finally { setMetricsLoading(false); }
         };
 
         updateMetrics();
@@ -90,7 +92,7 @@ function Overview() {
         return <div>Not logged in</div>;
     }
 
-    if (accountsLoading || metrics.totalTxn === undefined || username === "") {
+    if (accountsLoading || metricsLoading || username === "") {
         return (
             <Spinner/>
         );
@@ -141,6 +143,7 @@ function Overview() {
                     {/* Account Selector */}
                     <AccountSelector/>
                     
+                    <div className="not" style={{margin:'0.3rem', width: '0.2rem',height: '2rem', background: 'black', opacity: '10%', borderRadius:'3rem'}}></div>
                     {/* Time Range Filters */}
                     <button 
                         className={timeRange === '1W' ? 'active' : ''}
@@ -166,9 +169,8 @@ function Overview() {
                     >
                         ALL
                     </button>
-                    
                     <button className="refresh-btn">
-                        Refresh
+                        <img src={refresh} style={{width: '1.2rem', filter: 'invert(100%)'}}></img>
                     </button>
                 </div>
             </div>
@@ -204,11 +206,28 @@ function Overview() {
                 <NumberCard
                     type="graph"
                     name="Portfolio"
+                    data={
+                        <Chart
+                            dataValues = {!(metrics.delta.portfolioArray[0] > 0) ? [0,0,0,0,0] : metrics.delta.portfolioArray || [0,0,0,0,0]}
+                            // dataValues = {[23,23,23,23,23]}
+                        />
+                    }
+                    kpi={timeRange === 'ALL' ? `${metrics.delta.portfolio || 0}%` : `${metrics.delta.portfolio || 0}%`}
+                    kpi2={timeRange === 'ALL' ? ' All time' : ` Last ${displayTimeRange()}`}
                 />
                 <NumberCard
                     type="graph"
                     name="Spending Trend"
-                    kpi="Analytics"
+                    data={
+                        <Chart
+                            type="plot"
+                            // dataValues = {metrics.delta.spending}
+                            dataValues = {metrics.delta.spendingArray || [0,0,0,0,0]}
+                            // dataValues = {[30,18,48,23,50]}
+                        />
+                    }
+                    kpi={timeRange === 'ALL' ? `${metrics.delta.spending || 0}%` : `${metrics.delta.spending || 0}%`}
+                    kpi2={timeRange === 'ALL' ? ' All time' : ` Last ${displayTimeRange()}`}
                 />
             </div>
             
@@ -216,6 +235,7 @@ function Overview() {
                 <h1>Recent Transactions</h1>
                 <TransactionComponent 
                     type="transactions-list-horizontal"
+                    amount="10"
                 />
             </div>
         </section>

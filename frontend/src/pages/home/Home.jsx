@@ -1,6 +1,6 @@
 import "../../assets/fonts/font.css";
 import './Home.css';
-import card from '../../assets/card.png';
+import card from '../../assets/dashboard.png';
 import { Link } from 'react-router-dom';
 import Navbar from "../../components/navbar/Navbar";
 
@@ -17,15 +17,17 @@ function Home () {
                     <section className="text-container" >
                         <div className="divider" ></div>
                         <p>
-                            <br/> Cycle turns transactional data into clear suggestions by using quantitative analysis
-                            <br/> and creates a budget tailored for you—so decisions feel <span>obvious</span>, not emotional.​
+                            <br/> Cycle turns transactional data into clear suggestions via our analysis tools
+                            <br/> to create a tailored budget for you—so decisions feel <span>obvious</span>, not emotional.​
                         </p>
                     </section>
                     <section className="button-container">
                         <Link to='/dashboard'className="reg-cta" >Try Demo &nbsp;&nbsp;&gt; </Link>
                         <a href="#target-why" className="why-cta">Why Cycle?</a>
                     </section>
-                    <div className="card"><img src={card}></img></div>
+                    <div className="card">
+                        <img src={card}></img>
+                    </div>
                 </div>
                 <div id="target-why"></div>
                 <section className="about-section">

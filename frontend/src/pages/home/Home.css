@@ -18,15 +18,13 @@
     color: #0e0f11;
 }
 
-.card{
-    height: 100vh;
-}
-
 .card img{
-    height: 150vh;
-    filter: drop-shadow(0 0 40px #00000070);
+    height: 85vh;
+    width: 85vw;
+    filter: drop-shadow(0 0 40px #00000041);
     user-select: none;
-    margin: 0;
+    margin: 70px 0 0 0;
+    border-radius: 15px;
     padding: 0;
 }
 
@@ -70,8 +68,9 @@ span {
 }
 
 .hero-container .reg-cta {
-    width: 10rem;
-    height: 4em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     border-style: none;
     border-radius: 4px;
     padding-left: 20px;

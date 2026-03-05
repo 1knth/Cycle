@@ -18,7 +18,7 @@
     font-weight: 550 !important;
 }
 .account-selector:hover {  
-    background-color: rgb(255, 240, 230) !important;
+    background-color: rgb(241, 241, 241) !important;
 }
 
 .account-selector div {
@@ -67,7 +67,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 100%;
+    width: 20rem;
     transition: 0.1s ease;
     /* border-radius: 0.5rem; */
     /* padding: 0.5rem 0 0.5rem 0; */

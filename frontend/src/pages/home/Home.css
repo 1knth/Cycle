@@ -6,7 +6,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 190vh;
+    height: 140vh;
 }
 
 .hero-container h1 {
@@ -19,8 +19,8 @@
 }
 
 .card img{
-    height: 85vh;
-    width: 85vw;
+    height: 90vh;
+    width: 90vw;
     filter: drop-shadow(0 0 40px #00000041);
     user-select: none;
     margin: 70px 0 0 0;

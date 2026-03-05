@@ -1,4 +1,4 @@
-.cards-container {
+.row-1 {
     display: flex;
     align-items: stretch;
     justify-content: flex-start;
@@ -42,26 +42,25 @@
 }
 
 .filter-buttons button {
-    background-color: rgb(22, 22, 22); 
-    color: rgb(255, 255, 255);
+    background-color: rgba(129, 129, 129, 0.636); 
     border: none;
     border-radius: 25px;
     padding: 0.5rem 1rem;
     cursor: pointer;
     font-size: 1rem;
-    opacity: 30%;
     transition: 0.2s ease;
 }
 
+.filter-buttons button h6 {
+    font-size: 1rem;
+    font-weight: 500;
+    color: rgb(255, 255, 255);
+}
+
 .filter-buttons button:hover {
-    opacity: 60%;
+    background-color: rgb(71, 71, 71);
 }
-
-.filter-buttons button:active {
-    opacity: 100%;
-}
-
-.cards-container-2 {
+.row-2 {
     display: flex;
     align-items: stretch;
     justify-content: flex-start;
@@ -72,7 +71,7 @@
     padding: 0;
 }
 
-.dash-component-container {
+.overview-container {
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
@@ -85,8 +84,8 @@
 
 /* Mobile screens */
 @media (max-width: 768px) {
-    .cards-container,
-    .cards-container-2 {
+    .row-1,
+    .row-2 {
         flex-direction: row;
         align-items: stretch;
     }
@@ -96,19 +95,6 @@
         gap: 0.75rem;
     }
 }
-
-/* Tablet screens */
-/* @media (min-width: 769px) and (max-width: 1024px) {
-    .cards-container {
-        height: auto;
-        min-height: 10rem;
-    }
-    
-    .cards-container-2 {
-        height: auto;
-        min-height: 20rem;
-    }
-} */
 
 .transactions-list-container {
     display: flex;
@@ -134,8 +120,6 @@
     }
 
     .filter-buttons button {
-        background-color: rgb(22, 22, 22); 
-        color: rgb(255, 255, 255);
         padding: 0.4rem 0.5rem;
         border-radius: 10px;
         font-size: 0.7rem;
@@ -144,12 +128,12 @@
 
 /* Tablet screens */
 @media (min-width: 769px) and (max-width: 1024px) {
-    .cards-container {
+    .row-1 {
         display: flex;
         align-items: center;
         justify-content: center;
     }
-    .cards-container-2 {
+    .row-2 {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -168,7 +152,8 @@
 
 .refresh-btn {
     display: flex;
-    opacity: 85% !important;
+    background-color: rgb(62, 60, 59) !important;
+    opacity: 100% !important;
 }
 
 .refresh-btn:hover {

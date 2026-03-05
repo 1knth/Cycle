@@ -1,47 +1,51 @@
 import './auth.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import logo from '../../assets/whitename.png';
 import email_icon from '../../assets/email.png';
 import user_icon from '../../assets/person.png';
 import password_icon from '../../assets/password.png';
-import axios from 'axios';
 import Navbar from '../../components/navbar/Navbar';
 import { useNavigate } from 'react-router-dom';
-import { syncTransactions } from '../api/api.js';
+import { syncTransactions, signup, login } from '../api/api.js';
 
 function Signup() {
     const [email, setEmail] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [isLoading, setLoading] = useState(false);
     const [action, setAction] = useState("Signup");
     let lever = () => action === "Signup" ? "Login" : "Sign Up";
     let plever = () => action === "Signup" ? "Already a member? " : "Don't have an account? " ;
     let b2uttonText = () => action === "Signup" ? "Sign Up" : "Enter";
     const navigate = useNavigate();
-
+    useEffect(() => {
+        if (isLoading) {
+            document.body.style.cursor = 'wait';
+        } else {
+            document.body.style.cursor = 'default'
+        }
+    }, [isLoading]);
+    
     const handleSubmit = async (e) => { 
+        setLoading(true);
         e.preventDefault(); 
 
-        const endpoint = action === "Signup" ? 'http://localhost:5001/auth/signup' : 'http://localhost:5001/auth/login';
         const payload = action === "Signup" ? { username, email, password } : { username, password };
-
         try {
-            const response = await axios.post(endpoint, payload);
-            const data = response.data;
+            const data = action === "Signup" 
+                ? await signup(payload)
+                : await login(payload);
             
-            // Store only JWT token - user data fetched fresh from /api/user/me
             localStorage.setItem("token", data.accessToken);
             
-            console.log("Success!", response.data);
+            console.log("Success!", data);
             
-            // Sync transactions from Plaid if user has bank linked
             if (data.hasBankLinked) {
                 try {
                     await syncTransactions();
                     console.log("Transactions synced successfully");
                 } catch (syncErr) {
                     console.error("Bank account not linked", syncErr);
-                    // Don't block navigation if sync fails
                 }
             }
             
@@ -49,7 +53,7 @@ function Signup() {
             
         } catch (err) {
             console.error("Error:", err.response ? err.response.data : err.message);
-        }
+        } finally { setLoading(false); }
     }
 
     return (

@@ -167,23 +167,20 @@
 /* Desktop screens */
 @media (min-width: 1025px) {
     .regular {
-        width: 19rem;
+        width: 18rem;
         height: 170px;
     }
     
     .chart {
-        width: 40rem;
-        height: 24rem;
-    }
-    
-    .graph {
-        width: 710px;
+        width: 37rem;
         height: 12rem;
     }
     
-    .list .amount {
-        /* width: 16rem; */
+    .graph {
+        width: 37rem;
+        height: 12rem;
     }
+    
     .list {
         width: 16rem;
         height: 44rem;

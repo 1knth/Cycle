@@ -1,17 +1,14 @@
-const {Transactions } = require('../models/transaction.model.js');
-const Account = require ('../models/account.model.js');
+import {Transactions} from '../models/transaction.model.js';
+import Account from '../models/account.model.js';
 
-
-exports.calculateMetrics = async ( userId, accountId, timeRange) => {
+export const calculateMetrics = async (userId, accountId, timeRange) => {
     try {
-        // Build query
         const queryFilter = { userId: userId };
         
         if (accountId && accountId !== 'all') {
             queryFilter.accountId = accountId;
         }
 
-        // Time range filter
         const now = new Date();
         let startDate = null;
 
@@ -33,11 +30,8 @@ exports.calculateMetrics = async ( userId, accountId, timeRange) => {
             queryFilter.date = { $gte: startDate };
         }
 
-        // .find from mongoose
-        // returns: sorted transactions array (newest - oldest)
         const transactions = await Transactions.find(queryFilter).sort({ date: -1 });
 
-        // Get balance
         let balance = 0;
         if (accountId && accountId !== 'all') {
             const account = await Account.findOne({ 
@@ -46,12 +40,10 @@ exports.calculateMetrics = async ( userId, accountId, timeRange) => {
             });
             balance = account?.currentBalance || 0;
         } else {
-            // Sum all account balances
             const allAccounts = await Account.find({ userId: userId });
             balance = allAccounts.reduce((sum, acc) => sum + (acc.currentBalance || 0), 0);
         }
         
-        // edge case
         if (transactions.length === 0) {
             return ({
                 transactions: false,
@@ -70,7 +62,6 @@ exports.calculateMetrics = async ( userId, accountId, timeRange) => {
             });
         }
 
-        // total spend
         const spendingArray = [];
         const portfolioArray = [];
         let totalSpend = 0;
@@ -79,11 +70,10 @@ exports.calculateMetrics = async ( userId, accountId, timeRange) => {
             const amount = t.amount;
             let tempSpend = 0;
             let tempIncome = 0;
-            // for credits
             if (amount < 0) {
                 totalIncome += Math.abs(amount);
                 tempIncome = Math.abs(amount);
-            } else { // payment out
+            } else {
                 totalSpend += amount;
                 tempSpend = amount;
                 spendingArray.push(amount);
@@ -94,11 +84,8 @@ exports.calculateMetrics = async ( userId, accountId, timeRange) => {
         const portfolioDelta = ((totalIncome - totalSpend) / 100).toFixed(2);
         const spendingDelta = ((totalSpend / spendingArray.length) / 100).toFixed(2);
 
-
-        // average transaction price
         const avgTxn = spendingArray.length > 0 ? totalSpend / spendingArray.length : 0;
 
-        // Monthly spend (current month)
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
         const monthlyTransactions = transactions.filter(t => new Date(t.date) >= startOfMonth);
         const monthlySpend = monthlyTransactions.reduce((sum, t) => {
@@ -130,3 +117,9 @@ exports.calculateMetrics = async ( userId, accountId, timeRange) => {
         });
     } catch (err) {throw err;}
 }
+
+// export const calculateMetrics = async (userId, accountId, timeRange) => {
+//     try {
+//         return "hi";
+//     } catch (error) {console.error("error calculating metrics in service controller: ", error) }
+// } 

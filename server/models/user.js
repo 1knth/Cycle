@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const UserSchema = new mongoose.Schema({
     username: {
@@ -14,20 +14,7 @@ const UserSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
-    },
-    plaidAccessToken: {
-        type: String,
-    },
-    plaidItemId: {
-        type: String,
-    },
-    plaidCursor: {
-        type: String,
-        default: null
-    },
-    lastSync: {
-        type: Date,
     }
 }, { timestamps: true });
 
-module.exports = mongoose.model('User', UserSchema);
+export default mongoose.model('User', UserSchema);

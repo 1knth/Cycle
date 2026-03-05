@@ -1,9 +1,9 @@
-const { Transactions } = require('../models/transaction.model.js');
-const Account = require('../models/account.model.js');
-const User = require('../models/user');
-const { Configuration, PlaidApi, PlaidEnvironments } = require('plaid');
-const { calculateMetrics } = require('../services/transaction.service.js')
-require('dotenv').config();
+import {Transactions} from '../models/transaction.model.js';
+import Account from '../models/account.model.js';
+import PlaidItem from '../models/plaid-item.model.js';
+import {Configuration, PlaidApi, PlaidEnvironments} from 'plaid';
+import { calculateMetrics as calculateMetricsService } from '../services/transaction.service.js';
+import 'dotenv/config';
 
 const configuration = new Configuration({
   basePath: PlaidEnvironments[process.env.PLAID_ENV || 'sandbox'],
@@ -17,48 +17,26 @@ const configuration = new Configuration({
 });
 const plaidClient = new PlaidApi(configuration);
 
-// Helper function to sync accounts from Plaid
-const syncAccountsFromPlaid = async (userId) => {
-  const user = await User.findById(userId);
-  
-  if (!user || !user.plaidAccessToken) {
-    throw new Error('No bank account linked');
+const syncAccountsForPlaidItem = async (plaidItem) => {
+  if (!plaidItem || !plaidItem.plaidAccessToken) {
+    throw new Error('No plaid item provided');
   }
 
   try {
     const response = await plaidClient.accountsGet({
-      access_token: user.plaidAccessToken
+      access_token: plaidItem.plaidAccessToken
     });
 
     const accounts = response.data.accounts;
     const item = response.data.item;
-
-    // Get institution info
-    let institutionName = 'Unknown Bank';
-    let institutionId = item.institution_id;
-
-    if (institutionId) {
-      try {
-        const instResponse = await plaidClient.institutionsGetById({
-          institution_id: institutionId,
-          country_codes: ['US', 'CA']
-        });
-        institutionName = instResponse.data.institution.name;
-      } catch (e) {
-        console.log('Could not fetch institution name');
-      }
-    }
-
-    // Save/update each account 
-    // not using bulkwrite because a user rarely has more than 10 bank accounts
 
     for (const account of accounts) {
       await Account.findOneAndUpdate(
         { plaidAccountId: account.account_id },
         {
           $set: {
-            userId: userId,
-            plaidItemId: item.item_id,
+            userId: plaidItem.user,
+            plaidItemId: plaidItem._id,
             plaidAccountId: account.account_id,
             name: account.name,
             officialName: account.official_name,
@@ -68,8 +46,8 @@ const syncAccountsFromPlaid = async (userId) => {
             currentBalance: account.balances.current || 0,
             availableBalance: account.balances.available || 0,
             currency: account.balances.iso_currency_code || 'USD',
-            institutionName: institutionName,
-            institutionId: institutionId
+            institutionName: plaidItem.institutionName,
+            institutionId: plaidItem.institutionId
           }
         },
         { upsert: true, new: true }
@@ -83,56 +61,59 @@ const syncAccountsFromPlaid = async (userId) => {
   }
 };
 
-exports.getTransactions = async (req, res) => {
+export const syncTransactions = async (req, res) => {
   try {
-    const user = await User.findById(req.user._id);
-
-    if (!user || !user.plaidAccessToken) {
-      return res.status(400).json({ error: 'No bank account linked' });
+    const { plaidItemId } = req.params;
+    
+    const plaidItem = await PlaidItem.findOne({ 
+      _id: plaidItemId, 
+      user: req.user._id 
+    });
+    
+    if (!plaidItem) {
+      return res.status(403).json({ error: 'Not authorized to access this bank' });
+    }
+    
+    try {
+      await syncAccountsForPlaidItem(plaidItem);
+    } catch (err) {
+      console.log('Account sync warning:', err.message);
     }
 
-    // 1. Fetch "Sync" Data from Plaid
-    // We pass the 'cursor' so Plaid only gives us what changed since last time.
     const response = await plaidClient.transactionsSync({
-      access_token: user.plaidAccessToken,
-      cursor: user.plaidCursor || null, // <--- CRITICAL: Send the last cursor
-      count: 500 // Max items per page
+      access_token: plaidItem.plaidAccessToken,
+      cursor: plaidItem.plaidCursor || null,
+      count: 500
     });
 
     const { added, modified, removed, next_cursor } = response.data;
 
-    // 2. Prepare Database Operations (BulkWrite)
     const operations = [];
 
-    // HANDLE ADDED + MODIFIED (They act the same: Upsert)
-    const transactionsToUpdate = [...added, ...modified];
-    
-    transactionsToUpdate.forEach(t => {
-      operations.push(
-      {
+    [...added, ...modified].forEach(t => {
+      operations.push({
         updateOne: {
-          filter: { plaidTransactionId: t.transaction_id }, // Find by Plaid ID
+          filter: { plaidTransactionId: t.transaction_id },
           update: {
             $set: {
               amount: t.amount,
               date: t.date,
-              merchantName: t.merchant_name || t.merchantName || 'Unknown',
+              merchantName: t.merchant_name || 'Unknown',
               category: t.personal_finance_category || 'Uncategorized',
               accountId: t.account_id,
-              pending: t.pending, // Important for updates!
-              // Any other fields you want to update...
+              pending: t.pending,
             },
             $setOnInsert: {
-              userId: user._id,
-              plaidItemId: t.item_id, // Usually matches user.plaidItemId
+              userId: req.user._id,
+              plaidItemId: plaidItem._id,
               plaidTransactionId: t.transaction_id
             }
-          }, upsert: true 
+          },
+          upsert: true
         }
       });
     });
 
-    // HANDLE REMOVED (Delete from DB)
     removed.forEach(t => {
       operations.push({
         deleteOne: {
@@ -141,75 +122,120 @@ exports.getTransactions = async (req, res) => {
       });
     });
 
-    // 3. Execute Bulk Write (One big fast request)
     if (operations.length > 0) {
       await Transactions.bulkWrite(operations);
     }
 
-    // 4. SAVE THE CURSOR (Crucial!)
-    // Next time, we start from here.
-    user.plaidCursor = next_cursor;
-    await user.save();
+    plaidItem.plaidCursor = next_cursor;
+    plaidItem.lastSync = new Date();
+    plaidItem.status = 'good';
+    plaidItem.lastSyncError = null;
+    await plaidItem.save();
 
     res.json({ 
       success: true, 
-      added: added.length, 
-      modified: modified.length, 
-      removed: removed.length 
+      stats: {
+        added: added.length, 
+        modified: modified.length, 
+        removed: removed.length 
+      }
     });
 
   } catch (error) {
-    console.error('Error in getTransactions:', error);
+    console.error('Error in syncTransactions:', error);
+    
+    try {
+      const plaidItem = await PlaidItem.findById(req.params.plaidItemId);
+      if (plaidItem) {
+        plaidItem.status = 'error';
+        plaidItem.lastSyncError = error.message;
+        await plaidItem.save();
+      }
+    } catch (e) {
+      console.error('Failed to update error state:', e);
+    }
+
+    res.json({ 
+      success: false, 
+      stats: { added: 0, modified: 0, removed: 0 },
+      error: 'Sync failed, will retry later'
+    });
+  }
+};
+
+export const syncAllTransactions = async (req, res) => {
+  try {
+    const plaidItems = await PlaidItem.find({ user: req.user._id });
+    
+    let totalAdded = 0;
+    let totalModified = 0;
+    let totalRemoved = 0;
+
+    for (const item of plaidItems) {
+      try {
+        const mockReq = {
+          user: req.user,
+          params: { plaidItemId: item._id.toString() }
+        };
+        
+        let syncResult;
+        const mockRes = {
+          json: (data) => { syncResult = data; },
+          status: () => ({ json: (data) => { syncResult = data; } })
+        };
+
+        await syncTransactions(mockReq, mockRes);
+        
+        if (syncResult && syncResult.stats) {
+          totalAdded += syncResult.stats.added;
+          totalModified += syncResult.stats.modified;
+          totalRemoved += syncResult.stats.removed;
+        }
+      } catch (err) {
+        console.error(`Failed to sync ${item.institutionName}:`, err);
+      }
+    }
+
+    res.json({
+      success: true,
+      stats: {
+        added: totalAdded,
+        modified: totalModified,
+        removed: totalRemoved
+      }
+    });
+  } catch (error) {
+    console.error('Error in syncAllTransactions:', error);
+    res.json({ 
+      success: false, 
+      stats: { added: 0, modified: 0, removed: 0 }
+    });
+  }
+};
+
+export const getPlaidItems = async (req, res) => {
+  try {
+    const items = await PlaidItem.find({ user: req.user._id })
+      .select('_id institutionName status lastSync lastSyncError createdAt');
+
+    const itemsWithCounts = await Promise.all(
+      items.map(async (item) => {
+        const accountCount = await Account.countDocuments({ plaidItemId: item._id });
+        return {
+          ...item.toObject(),
+          accountCount
+        };
+      })
+    );
+
+    res.json({ items: itemsWithCounts });
+  } catch (error) {
+    console.error('Error in getPlaidItems:', error);
     res.status(500).json({ error: error.message });
   }
 };
 
-// exports.getTransactions = async (req, res) => {
-//   try {
-//     const user = await User.findById(req.user._id);
-    
-//     if (!user || !user.plaidAccessToken) {
-//       return res.status(400).json({ error: 'No bank account linked' });
-//     }
-
-//     // Sync accounts first
-//     await syncAccountsFromPlaid(req.user._id);
-
-//     const response = await plaidClient.transactionsSync({
-//       access_token: user.plaidAccessToken,
-//     });
-    
-//     const newTransactions = response.data.added;
-
-//     for (const t of newTransactions) {
-//       await Transactions.findOneAndUpdate(
-//         { plaidTransactionId: t.transaction_id },
-//         {
-//           $set: {
-//             amount: t.amount,
-//             date: t.date,
-//             merchantName: t.merchant_name || 'Unknown',
-//             category: t.personal_finance_category?.primary || 'Uncategorized',
-//             accountId: t.account_id
-//           },
-//           $setOnInsert: {
-//             userId: user._id,
-//             plaidItemId: user.plaidItemId,
-//             plaidTransactionId: t.transaction_id
-//           }
-//         },
-//         { upsert: true, new: true, setDefaultOnInsert: true }
-//       );
-//     }
-
-//     res.json({ success: true, count: newTransactions.length });
-//   } catch (error) {
-//     console.error('Error in getTransactions:', error);
-//     res.status(500).json({ error: error.message });
-//   }
-// };
-
-exports.readTransactions = async (req, res) => {
+export const readTransactions = async (req, res) => {
   try {
     const transactions = await Transactions.find({ userId: req.user._id })
       .sort({ date: -1 })
@@ -222,20 +248,21 @@ exports.readTransactions = async (req, res) => {
   }
 };
 
-exports.getAccounts = async (req, res) => {
+export const getAccounts = async (req, res) => {
   try {
-    // First, try to sync accounts from Plaid to ensure we have latest data
-    try {
-      await syncAccountsFromPlaid(req.user._id);
-    } catch (syncErr) {
-      console.log('Could not sync accounts from Plaid:', syncErr.message);
-      // Continue with cached accounts if sync fails
+    const plaidItems = await PlaidItem.find({ user: req.user._id });
+    
+    for (const item of plaidItems) {
+      try {
+        await syncAccountsForPlaidItem(item);
+      } catch (syncErr) {
+        console.log(`Could not sync accounts for ${item.institutionName}:`, syncErr.message);
+      }
     }
 
     const accounts = await Account.find({ userId: req.user._id })
       .sort({ institutionName: 1, type: 1, name: 1 });
 
-    // Group by institution
     const grouped = accounts.reduce((groups, account) => {
       const inst = account.institutionName || 'Other';
       if (!groups[inst]) groups[inst] = [];
@@ -268,9 +295,18 @@ exports.getAccounts = async (req, res) => {
   }
 };
 
-exports.syncAccounts = async (req, res) => {
+export const syncAccounts = async (req, res) => {
   try {
-    await syncAccountsFromPlaid(req.user._id);
+    const plaidItems = await PlaidItem.find({ user: req.user._id });
+    
+    for (const item of plaidItems) {
+      try {
+        await syncAccountsForPlaidItem(item);
+      } catch (err) {
+        console.error(`Failed to sync accounts for ${item.institutionName}:`, err);
+      }
+    }
+    
     res.json({ success: true });
   } catch (err) {
     console.error('Error in syncAccounts:', err);
@@ -278,12 +314,12 @@ exports.syncAccounts = async (req, res) => {
   }
 };
 
-exports.calculateMetrics = async (req, res) => {
+export const calculateMetricsController = async (req, res) => {
   try {
     const userId = req.user._id;
     const accountId = req.query.accountId;
     const timeRange = req.query.timeRange || '1M';
-    const result = await calculateMetrics(userId, accountId, timeRange)
+    const result = await calculateMetricsService(userId, accountId, timeRange)
     res.json(result);
   } catch (err) {
     res.status(500).json({ error: "Calculation error: " + err.message });

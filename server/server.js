@@ -1,39 +1,33 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-const app = express();
-const PORT = process.env.PORT || 5001;
+import 'dotenv/config';
+import express from 'express';
+import cors from 'cors';
+import { connectDB } from './config/db.js';
+import authRoutes from './routes/auth.routes.js';
+import transactionRoutes from './routes/transaction.routes.js';
+import accountRoutes from './routes/account.routes.js';
+import plaidRoutes from './routes/plaid.routes.js';
 
-//middleware
+const PORT = process.env.PORT || 5001;
+const app = express();
+
 app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true,
 }));
 app.use(express.json());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
 
-//Mongodb config
-const DB_URL = process.env.DB_URL;
-if (!DB_URL) {
-  console.error("No DB_URL found in .env file");
-}
+app.use('/api/auth', authRoutes);
+app.use('/api/transactions', transactionRoutes);
+app.use('/api/accounts', accountRoutes);
+app.use('/api/plaid', plaidRoutes);
 
-mongoose.connect(DB_URL)
-  .then(() => {
-    console.log('mongodb is connected');
-  })
-  .catch((err) => {
-    console.error('mongodb connection error:', err);
-  });
-
-require('./routes/transaction.routes.js')(app);
-require('./routes/auth.routes.js')(app);
-require('./routes/link.routes.js')(app);
-require('./routes/user.routes.js')(app);
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}\n`);
+app.get('/api', (req, res) => {
+  res.send('Cycle API running');
 });
+
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}\n`);
+  });
+});
+

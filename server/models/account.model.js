@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const AccountSchema = new mongoose.Schema({
     userId: { 
@@ -7,7 +7,8 @@ const AccountSchema = new mongoose.Schema({
         required: true 
     },
     plaidItemId: { 
-        type: String, 
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'PlaidItem',
         required: true 
     },
     plaidAccountId: { 
@@ -29,4 +30,4 @@ const AccountSchema = new mongoose.Schema({
 
 AccountSchema.index({ userId: 1 });
 
-module.exports = mongoose.model('Account', AccountSchema);
+export default mongoose.model('Account', AccountSchema);

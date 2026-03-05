@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const TransactionSchema = new mongoose.Schema({
     userId: { 
@@ -6,7 +6,9 @@ const TransactionSchema = new mongoose.Schema({
     },
     accountId: String,
     plaidItemId: { 
-        type: String, ref: 'PlaidItem' 
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'PlaidItem',
+        required: true
     },
     amount: Number,
     category_id: String,
@@ -25,19 +27,4 @@ TransactionSchema.index({ plaidTransactionId: 1 });
 
 const Transactions = mongoose.model('Transaction', TransactionSchema);
 
-// const MetricsSchema = new mongoose.Schema({
-//     balance: Number,
-//     spend: Number,
-//     bills: Number,
-//     avgtxn: Number,
-//     delta: {
-//         spending: [],
-//         growth: Number,
-//         percentage: Number
-//     },
-
-// }, { timestamps: true });
-
-// const Metrics = mongoose.model('Metric', MetricsSchema);
-
-module.exports = {Transactions};
+export { Transactions };

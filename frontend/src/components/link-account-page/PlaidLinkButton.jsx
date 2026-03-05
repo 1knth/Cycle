@@ -1,55 +1,54 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { usePlaidLink } from 'react-plaid-link';
+import { syncBank, createLinkToken, exchangePublicToken } from '../../pages/api/api.js';
 import './PlaidLinkButton.css';
 
 function PlaidLinkButton({ onLinked }) {
   const [token, setToken] = useState(null);
+  const [isSyncing, setIsSyncing] = useState(false);
 
-  // initialize link token
   useEffect(() => {
-    const createLinkToken = async () => {
+    const fetchLinkToken = async () => {
       try {
-        const token = localStorage.getItem('token');
-        const response = await fetch('http://localhost:5001/api/plaid/create-link-token', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-        const data = await response.json();
+        const data = await createLinkToken();
         setToken(data.link_token);
       } catch (err) {
         console.error("Error creating link token:", err);
       }
     };
 
-    createLinkToken();
+    fetchLinkToken();
   }, []);
 
-  // 2. Handle what happens after user connects a bank
   const onSuccess = useCallback(async (publicToken, metadata) => {
     try {
-      const token = localStorage.getItem('token');
-      await fetch('http://localhost:5001/api/plaid/exchange-public-token', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({ public_token: publicToken, metadata }),
-      });
-      alert("Bank connected successfully!");
+      const exchangeData = await exchangePublicToken(publicToken, metadata);
+      
+      if (!exchangeData.success) {
+        throw new Error('Failed to exchange token');
+      }
+
+      setIsSyncing(true);
+      const plaidItemId = exchangeData.plaidItem._id;
+      const syncResult = await syncBank(plaidItemId);
+      
+      if (syncResult.success && syncResult.stats.added > 0) {
+        alert(`Bank connected! ${syncResult.stats.added} transactions imported.`);
+      } else {
+        alert("Bank connected! Your transactions will appear shortly.");
+      }
+      
       if (onLinked) {
         onLinked();
       }
     } catch (err) {
-      console.error("Error exchanging token:", err);
+      console.error("Error:", err);
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setIsSyncing(false);
     }
   }, [onLinked]);
 
-  // pass in link token
-  // link bank account portal on click
   const { open, ready } = usePlaidLink({
     token: token,
     onSuccess,
@@ -59,9 +58,9 @@ function PlaidLinkButton({ onLinked }) {
     <button 
         id="link-button"
         onClick={() => open()}
-        disabled={!ready}
+        disabled={!ready || isSyncing}
     >
-      Link Account
+      {isSyncing ? 'Syncing...' : 'Link Account'}
     </button>
   );
 }

@@ -1,6 +1,5 @@
 import Transactions from '../../components/transactions/Transactions.jsx';
 import './transactions-page.css';
-import '../../components/overview/dash-component.css'; 
 import SearchBar from '../../components/SearchBar/SearchBar.jsx';
 import {useState, useEffect} from 'react';
 import {readTransactions} from '../api/api.js';

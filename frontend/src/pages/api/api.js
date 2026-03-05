@@ -13,18 +13,18 @@ const getAuthHeaders = () => {
 
 // Auth APIs
 export const signup = async (data) => {
-  const response = await axios.post(`${API_URL}/auth/signup`, data);
+  const response = await axios.post(`${API_URL}/api/auth/signup`, data);
   return response.data;
 };
 
 export const login = async (data) => {
-  const response = await axios.post(`${API_URL}/auth/login`, data);
+  const response = await axios.post(`${API_URL}/api/auth/login`, data);
   return response.data;
 };
 
 // User APIs
 export const getUser = async () => {
-  const response = await axios.get(`${API_URL}/api/user/me`, {
+  const response = await axios.get(`${API_URL}/api/auth/me`, {
     headers: getAuthHeaders(),
   });
   return response.data;
@@ -51,7 +51,7 @@ export const exchangePublicToken = async (publicToken, metadata) => {
 
 // Transaction APIs
 export const readTransactions = async (amount) => {
-  const response = await axios.get(`${API_URL}/transactions?limit=${amount}`, {
+  const response = await axios.get(`${API_URL}/api/transactions?limit=${amount}`, {
     headers: getAuthHeaders(),
   });
   return response.data;
@@ -62,15 +62,15 @@ export const calculateAnalytics = async (accountId, timeRange) => {
   if (accountId) params.append('accountId', accountId);
   if (timeRange) params.append('timeRange', timeRange);
 
-  const response = await axios.get(`${API_URL}/dashboard/analytics/forecast?${params.toString()}`, {
+  const response = await axios.get(`${API_URL}/api/transactions/overview?${params.toString()}`, {
     headers: getAuthHeaders(),  
   });
   return response.data;
 }
 
-// Sync transactions from Plaid to MongoDB
+// Sync all transactions from Plaid to MongoDB
 export const syncTransactions = async () => {
-  const response = await axios.get(`${API_URL}/transactions/get`, {
+  const response = await axios.post(`${API_URL}/api/plaid/sync-all`, {}, {
     headers: getAuthHeaders(),
   });
   return response.data;
@@ -81,7 +81,7 @@ export const calculateMetrics = async (accountId, timeRange) => {
   if (accountId) params.append('accountId', accountId);
   if (timeRange) params.append('timeRange', timeRange);
   
-  const response = await axios.get(`${API_URL}/transactions/overview?${params.toString()}`, {
+  const response = await axios.get(`${API_URL}/api/transactions/overview?${params.toString()}`, {
     headers: getAuthHeaders(),
   });
   return response.data;
@@ -96,6 +96,29 @@ export const getAccounts = async () => {
 
 export const syncAccounts = async () => {
   const response = await axios.post(`${API_URL}/api/accounts/sync`, {}, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
+export const getLinkedBanks = async () => {
+  const response = await axios.get(`${API_URL}/api/plaid/items`, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
+// Sync all banks (for login)
+export const syncAllBanks = async () => {
+  const response = await axios.post(`${API_URL}/api/plaid/sync-all`, {}, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+};
+
+// Sync specific bank
+export const syncBank = async (plaidItemId) => {
+  const response = await axios.post(`${API_URL}/api/plaid/sync/${plaidItemId}`, {}, {
     headers: getAuthHeaders(),
   });
   return response.data;

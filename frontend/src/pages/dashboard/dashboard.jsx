@@ -2,6 +2,7 @@ import './dashboard.css';
 import { Outlet, useNavigate } from 'react-router-dom';
 import LinkAccount from '../../components/link-account-page/LinkBank.jsx';
 import {IsLoggedIn, AccountProvider} from '../../components/context/context.jsx'
+import {DashboardProvider} from '../../components/context/dashboard-context.jsx'
 import {useState, useEffect} from 'react';
 import Dashbar from '../../components/dashbar/Dashbar.jsx';
 import { getUser } from '../api/api.js';
@@ -54,9 +55,11 @@ function Dashboard() {
                     <div className="dashboard-viewport">
                         <section className="sections-container">
                             {plaidLinked ? (
-                                <AccountProvider>
-                                    <Outlet/>
-                                </AccountProvider>
+                                <DashboardProvider>
+                                    <AccountProvider>
+                                        <Outlet/>
+                                    </AccountProvider>
+                                </DashboardProvider>
                             ) : (
                                 <LinkAccount onLinked={handleLinked}/>
                             )} 

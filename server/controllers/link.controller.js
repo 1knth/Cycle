@@ -1,9 +1,7 @@
-const { Configuration, PlaidApi, PlaidEnvironments } = require('plaid');
-require('dotenv').config();
-const User = require('../models/user');
+import { Configuration, PlaidApi, PlaidEnvironments } from 'plaid';
+import 'dotenv/config';
+import PlaidItem from '../models/plaid-item.model.js';
 
-
-//intialize plaid client
 const configuration = new Configuration({
   basePath: PlaidEnvironments[process.env.PLAID_ENV || 'sandbox'],
   baseOptions: {
@@ -15,10 +13,8 @@ const configuration = new Configuration({
 });
 const plaidClient = new PlaidApi(configuration);
 
-// 1. Create Link Token
-exports.createLinkToken = async (req, res) => {
+export const createLinkToken = async (req, res) => {
   try {
-    // Ensure this is a string
     const clientUserId = req.user._id.toString(); 
 
     const request = {
@@ -32,14 +28,12 @@ exports.createLinkToken = async (req, res) => {
     const createTokenResponse = await plaidClient.linkTokenCreate(request);
     res.json(createTokenResponse.data);
   } catch (error) {
-    // Plaid errors are usually in error.response.data
     console.error('Plaid Link Token Error:', error.response?.data || error.message);
     res.status(500).json({ error: error.response?.data || error.message });
   }
 };
 
-// 2. Exchange Public Token
-exports.exchangePublicToken = async (req, res) => {
+export const exchangePublicToken = async (req, res) => {
   try {
     const { public_token } = req.body;
     
@@ -50,13 +44,45 @@ exports.exchangePublicToken = async (req, res) => {
     const accessToken = response.data.access_token;
     const itemId = response.data.item_id;
 
-    // Corrected Database Save Logic
-    await User.findByIdAndUpdate(req.user._id, { 
-      plaidAccessToken: accessToken, 
-      plaidItemId: itemId 
-    });
+    let institutionName = 'Unknown Bank';
+    let institutionId = null;
+    try {
+      const itemResponse = await plaidClient.itemGet({
+        access_token: accessToken
+      });
+      institutionId = itemResponse.data.item.institution_id;
+      
+      if (institutionId) {
+        const instResponse = await plaidClient.institutionsGetById({
+          institution_id: institutionId,
+          country_codes: ['US', 'CA']
+        });
+        institutionName = instResponse.data.institution.name;
+      }
+    } catch (e) {
+      console.log('Could not fetch institution name:', e.message);
+    }
 
-    res.json({ success: true, itemId });
+    const plaidItem = new PlaidItem({
+      user: req.user._id,
+      plaidAccessToken: accessToken,
+      plaidItemId: itemId,
+      institutionName: institutionName,
+      institutionId: institutionId,
+      plaidCursor: null,
+      lastSync: null,
+      status: 'good'
+    });
+    await plaidItem.save();
+
+    res.json({ 
+      success: true, 
+      plaidItem: {
+        _id: plaidItem._id,
+        plaidItemId: plaidItem.plaidItemId,
+        institutionName: plaidItem.institutionName
+      }
+    });
   } catch (error) {
     console.error('Plaid Exchange Error:', error.response?.data || error.message);
     res.status(500).json({ error: error.response?.data || error.message });

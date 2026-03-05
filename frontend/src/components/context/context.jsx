@@ -12,7 +12,7 @@ export const AccountProvider = ({ children }) => {
     const [selectedAccount, setSelectedAccount] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
+    const [timeRange, setTimeRange] = useState('1M');
     useEffect(() => {
         const loadAccounts = async () => {
             try {
@@ -22,10 +22,9 @@ export const AccountProvider = ({ children }) => {
                 
                 setAccounts(accList);
                 
-                const defaultAccount = accList.length > 0 ? 
-                    accList[0] 
-                    : 
-                    { id: 'all', name: 'All Accounts' };
+                const defaultAccount = (accList.length > 0) 
+                ? accList[0] 
+                : { id: 'all', name: 'All Accounts' };
                 setSelectedAccount(defaultAccount);
             } catch (err) {
                 console.error('Error loading accounts:', err);
@@ -42,6 +41,8 @@ export const AccountProvider = ({ children }) => {
         accounts,
         selectedAccount,
         setSelectedAccount,
+        timeRange,
+        setTimeRange,
         loading,
         error
     };

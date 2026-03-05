@@ -4,7 +4,7 @@ import { verifyToken } from '../controllers/auth.controller.js';
 
 const router = express.Router();
 
-router.get('/', verifyToken, transactionController.readTransactions);
-router.get('/overview', verifyToken, transactionController.calculateMetricsController);
+router.get('/', verifyToken, transactionController.getAccounts);
+router.post('/sync', verifyToken, transactionController.syncAccounts);
 
 export default router;

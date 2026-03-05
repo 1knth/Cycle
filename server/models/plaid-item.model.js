@@ -1,7 +1,6 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const PlaidItemSchema = new mongoose.Schema({
-    // Link to the user who owns this bank connection
     user: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'User', 
@@ -22,9 +21,22 @@ const PlaidItemSchema = new mongoose.Schema({
         type: String 
     },
     
+    plaidCursor: { 
+        type: String, 
+        default: null 
+    },
+    lastSync: { 
+        type: Date, 
+        default: null 
+    },
+    lastSyncError: { 
+        type: String, 
+        default: null 
+    },
     status: { 
-        type: String, default: 'good' 
+        type: String, 
+        default: 'good' 
     } 
 }, { timestamps: true });
 
-module.exports = mongoose.model('PlaidItem', PlaidItemSchema);
+export default mongoose.model('PlaidItem', PlaidItemSchema);

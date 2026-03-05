@@ -1,22 +1,20 @@
-import '../../components/overview/dash-component.css';
+import '../../components/overview/Overview.css';
 import NumberCard from "../cards/NumberCard.jsx"
 import { useState, useEffect } from 'react';
 import Spinner from '../loading-spinner/spinner.jsx'
-import { calculateMetrics, syncTransactions, getUser } from '../../pages/api/api.js';
+import { calculateMetrics, getUser } from '../../pages/api/api.js';
 import { useAccount } from '../../components/context/context.jsx';
 import TransactionComponent from '../transactions/Transactions.jsx';
-import AccountSelector from '../account-selector/Account-Selector.jsx';
 import Chart from '../charts/Charts.jsx';
-import refresh from '../../assets/refresh.svg'
+import OverviewBar from '../OverviewBar/OverviewBar.jsx';
 
 function Overview() {
     const [metrics, setMetrics] = useState({});
-    const { accounts, selectedAccount, loading: accountsLoading, error: accountsError } = useAccount();
-    const [timeRange, setTimeRange] = useState('1M'); // Default to 1 month
+    const {accounts, selectedAccount, loading: accountsLoading, error: accountsError } = useAccount();
+    const [timeRange, setTimeRange] = useState('ALL'); // Default to 1 month
+    const [username, setUsername] = useState("");
     const [metricsLoading, setMetricsLoading] = useState(true);
     const [metricsError, setMetricsError] = useState(null);
-    const [username, setUsername] = useState("");
-    const [spending, setSpending] = useState([]);
     
 
     useEffect(() => {
@@ -51,29 +49,6 @@ function Overview() {
 
         updateMetrics();
     }, [selectedAccount, timeRange]);
-
-    const handleTimeRangeChange = (range) => {
-        setTimeRange(range);
-    };
-
-    // const handleRefresh = async () => {
-    //     try {
-    //         setLoading(true);
-    //         await syncTransactions();
-    //         // Refresh accounts in case new ones were added
-    //         const accountsData = await getAccounts();
-    //         setAccounts(accountsData.accounts || []);
-    //         setGroupedAccounts(accountsData.groupedByInstitution || {});
-    //         // Refresh metrics
-    //         const metricsData = await calculateMetrics(selectedAccount?.id, timeRange);
-    //         setMetrics(metricsData);
-    //     } catch (err) {
-    //         console.error('Error refreshing:', err);
-    //         setError('Failed to refresh data');
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
 
     const displayTimeRange = () => {
         switch(timeRange) {
@@ -133,112 +108,75 @@ function Overview() {
 
     return (
         <>
-        <section className="dash-component-container">
-            <div className="filter-bar">
-                <div className="welcome-text">
-                    <p>Welcome,</p>
-                    <p>{username?.charAt(0).toUpperCase() + username?.slice(1) || "User"}</p>
+            <section className="overview-container">
+                <OverviewBar 
+                    username={username}
+                />
+                <div className="row-1">
+                    <NumberCard
+                        type="regular"
+                        name="Balance"
+                        data={`$${Intl.NumberFormat("en-US", {maximumFractionDigits: 2, minimumFractionDigits: 2}).format(metrics.balance)}` || 0}
+                        kpi="Current"
+                    />
+                    <NumberCard
+                        type="regular"
+                        name="Transactions"
+                        data={`${metrics.totalTxn}` || 0}
+                        kpi={timeRange === 'ALL' ? 'All time' : `Last ${displayTimeRange()}`}
+                    />
+                    <NumberCard
+                        type="regular"
+                        name="Total Spend"
+                        data={`$${Intl.NumberFormat("en-US", {maximumFractionDigits: 2, minimumFractionDigits: 2}).format(metrics.totalSpend)}` || 0}
+                        kpi={timeRange === 'ALL' ? 'All time' : `Last ${displayTimeRange()}`}
+                    />
+                    <NumberCard
+                        type="regular"
+                        name="Avg Transaction"
+                        data={`$${Intl.NumberFormat("en-US", {maximumFractionDigits: 2, minimumFractionDigits: 2}).format(metrics.avgTxn)}` || 0}
+                        kpi={timeRange === 'ALL' ? 'All time' : `Last ${displayTimeRange()}`}
+                    />
                 </div>
-                <div className="filter-buttons">
-                    {/* Account Selector */}
-                    <AccountSelector/>
-                    
-                    <div className="not" style={{margin:'0.3rem', width: '0.2rem',height: '2rem', background: 'black', opacity: '10%', borderRadius:'3rem'}}></div>
-                    {/* Time Range Filters */}
-                    <button 
-                        className={timeRange === '1W' ? 'active' : ''}
-                        onClick={() => handleTimeRangeChange('1W')}
-                    >
-                        1W
-                    </button>
-                    <button 
-                        className={timeRange === '1M' ? 'active' : ''}
-                        onClick={() => handleTimeRangeChange('1M')}
-                    >
-                        1M
-                    </button>
-                    <button 
-                        className={timeRange === '1Y' ? 'active' : ''}
-                        onClick={() => handleTimeRangeChange('1Y')}
-                    >
-                        1Y
-                    </button>
-                    <button 
-                        className={timeRange === 'ALL' ? 'active' : ''}
-                        onClick={() => handleTimeRangeChange('ALL')}
-                    >
-                        ALL
-                    </button>
-                    <button className="refresh-btn">
-                        <img src={refresh} style={{width: '1.2rem', filter: 'invert(100%)'}}></img>
-                    </button>
+                
+                <div className="row-2">
+                    <NumberCard
+                        type="graph"
+                        name="Portfolio"
+                        data={
+                            <Chart
+                                dataValues = {!(metrics.delta.portfolioArray[0] > 0) ? [0,0,0,0,0] : metrics.delta.portfolioArray || [0,0,0,0,0]}
+                                // dataValues = {[23,23,23,23,23]}
+                            />
+                        }
+                        kpi={timeRange === 'ALL' ? `${metrics.delta.portfolio || 0}%` : `${metrics.delta.portfolio || 0}%`}
+                        kpi2={timeRange === 'ALL' ? ' All time' : ` Last ${displayTimeRange()}`}
+                    />
+                    <NumberCard
+                        type="graph"
+                        name="Spending Trend"
+                        data=
+                            {
+                                <Chart
+                                    type="plot"
+                                    // dataValues = {metrics.delta.spending}
+                                    dataValues = {metrics.delta.spendingArray || [0,0,0,0,0]}
+                                    // dataValues = {[30,18,48,23,50]}
+                                />
+                            }
+                        kpi={timeRange === 'ALL' ? `${metrics.delta.spending || 0}%` : `${metrics.delta.spending || 0}%`}
+                        kpi2={timeRange === 'ALL' ? ' All time' : ` Last ${displayTimeRange()}`}
+                    />
                 </div>
-            </div>
-            
-            <div className="cards-container">
-                <NumberCard
-                    type="regular"
-                    name="Balance"
-                    data={`$${Intl.NumberFormat("en-US", {maximumFractionDigits: 2, minimumFractionDigits: 2}).format(metrics.balance)}` || 0}
-                    kpi="Current"
-                />
-                <NumberCard
-                    type="regular"
-                    name="Transactions"
-                    data={`${metrics.totalTxn}` || 0}
-                    kpi={timeRange === 'ALL' ? 'All time' : `Last ${displayTimeRange()}`}
-                />
-                <NumberCard
-                    type="regular"
-                    name="Total Spend"
-                    data={`$${Intl.NumberFormat("en-US", {maximumFractionDigits: 2, minimumFractionDigits: 2}).format(metrics.totalSpend)}` || 0}
-                    kpi={timeRange === 'ALL' ? 'All time' : `Last ${displayTimeRange()}`}
-                />
-                <NumberCard
-                    type="regular"
-                    name="Avg Transaction"
-                    data={`$${Intl.NumberFormat("en-US", {maximumFractionDigits: 2, minimumFractionDigits: 2}).format(metrics.avgTxn)}` || 0}
-                    kpi={timeRange === 'ALL' ? 'All time' : `Last ${displayTimeRange()}`}
-                />
-            </div>
-            
-            <div className="cards-container-2">
-                <NumberCard
-                    type="graph"
-                    name="Portfolio"
-                    data={
-                        <Chart
-                            dataValues = {!(metrics.delta.portfolioArray[0] > 0) ? [0,0,0,0,0] : metrics.delta.portfolioArray || [0,0,0,0,0]}
-                            // dataValues = {[23,23,23,23,23]}
-                        />
-                    }
-                    kpi={timeRange === 'ALL' ? `${metrics.delta.portfolio || 0}%` : `${metrics.delta.portfolio || 0}%`}
-                    kpi2={timeRange === 'ALL' ? ' All time' : ` Last ${displayTimeRange()}`}
-                />
-                <NumberCard
-                    type="graph"
-                    name="Spending Trend"
-                    data={
-                        <Chart
-                            type="plot"
-                            // dataValues = {metrics.delta.spending}
-                            dataValues = {metrics.delta.spendingArray || [0,0,0,0,0]}
-                            // dataValues = {[30,18,48,23,50]}
-                        />
-                    }
-                    kpi={timeRange === 'ALL' ? `${metrics.delta.spending || 0}%` : `${metrics.delta.spending || 0}%`}
-                    kpi2={timeRange === 'ALL' ? ' All time' : ` Last ${displayTimeRange()}`}
-                />
-            </div>
-            
-            <div className="card-container">
-                <h1>Recent Transactions</h1>
-                <TransactionComponent 
-                    type="transactions-list-horizontal"
-                    amount="10"
-                />
-            </div>
-        </section>
+                
+                <div className="card-container">
+                    <h1>Recent Transactions</h1>
+                    <TransactionComponent 
+                        type="transactions-list-horizontal"
+                        amount="10"
+                    />
+                </div>
+            </section>
         </>
     );
 }

@@ -1,3 +1,42 @@
+/* Font imports for Cycle app */
+
+/* Editorial New fonts */
+@font-face {
+  font-family: 'Editorial New';
+  src: url('./PPEditorialNew-Ultralight-BF644b21500d0c0.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Editorial New';
+  src: url('./PPEditorialNew-UltralightItalic-BF644b214ff1e9b.otf') format('opentype');
+  font-weight: 100;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Editorial New';
+  src: url('./PPEditorialNew-Italic-BF644b214fb0c0a.otf') format('opentype');
+  font-weight: 400;
+  font-style: italic;
+}
+
+/* Metrik fonts */
+@font-face {
+  font-family: 'Metrik';
+  src: url('./MetrikTrial-Light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Metrik';
+  src: url('./MetrikTrial-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+
 @font-face {
   font-family: 'Metrik';
   src: url('./MetrikTrial-Medium.otf') format('opentype');
@@ -18,9 +57,39 @@
   font-weight: 900;
   font-style: normal;
 }
+
+/* Metrik Italic variants */
 @font-face {
   font-family: 'Metrik';
-  src: url('./MetrikTrial-Regular.otf') format('opentype');
+  src: url('./MetrikTrial-LightItalic.otf') format('opentype');
+  font-weight: 300;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Metrik';
+  src: url('./MetrikTrial-Italic.otf') format('opentype');
   font-weight: 400;
-  font-style: normal;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Metrik';
+  src: url('./MetrikTrial-MediumItalic.otf') format('opentype');
+  font-weight: 500;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Metrik';
+  src: url('./MetrikTrial-BoldItalic.otf') format('opentype');
+  font-weight: 700;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Metrik';
+  src: url('./MetrikTrial-BlackItalic.otf') format('opentype');
+  font-weight: 900;
+  font-style: italic;
 }

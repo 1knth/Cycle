@@ -13,9 +13,8 @@ function Home () {
             </header>
             <main>
                 <div className="hero-container">
-                    <h1>Spend because you can <span>Afford</span> to.</h1>
                     <section className="text-container" >
-                        <div className="divider" ></div>
+                        <h1>Spend Because You <span>Can</span></h1>
                         <p>
                             <br/> Cycle turns transactional data into clear suggestions via our analysis tools
                             <br/> to create a tailored budget for you—so decisions feel <span>obvious</span>, not emotional.​
@@ -25,9 +24,9 @@ function Home () {
                         <Link to='/dashboard'className="reg-cta" >Try Demo &nbsp;&nbsp;&gt; </Link>
                         <a href="#target-why" className="why-cta">Why Cycle?</a>
                     </section>
-                    <div className="card">
-                        <img src={card}></img>
-                    </div>
+                </div>
+                <div className="card">
+                    <img src={card} alt='dashboard'/>
                 </div>
                 <div id="target-why"></div>
                 <section className="about-section">
@@ -40,8 +39,17 @@ function Home () {
                     </div>
                 </section>
             </main>
-            <footer>
-                
+            <footer className="footer-container">
+                <div className="footer-bar">
+                    <div className="footer-text">
+                        <p>Reach out at: knthyang gm@ildotcom</p>
+                        <p id="footer-text-note">dodging web scrapes!</p>
+                    </div>
+                    <div className="footer-socials">
+                        <p>github</p>
+                        <p>linkedin</p>
+                    </div>
+                </div>
             </footer>
         </div>
     );

@@ -17,9 +17,9 @@ app.use(cors({
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);
-app.use('/api/transactions', transactionRoutes);
-app.use('/api/accounts', accountRoutes);
 app.use('/api/plaid', plaidRoutes);
+app.use('/api/accounts', accountRoutes);
+app.use('/api/transactions', transactionRoutes);
 
 app.get('/api', (req, res) => {
   res.send('Cycle API running');

@@ -54,6 +54,7 @@
     font-family: 'Editorial New';
     text-decoration: underline;
     color: #7d889f;
+    letter-spacing: -0.7px !important;
 }
 
 .button-container {
@@ -128,7 +129,7 @@
 
 .text-container p {
     font-size: 1.7rem;
-    letter-spacing: -1.7px !important;
+    letter-spacing: -2px !important;
     color: #545e72;
     user-select: none;
 }

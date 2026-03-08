@@ -1,14 +1,13 @@
 import express from 'express';
-import * as transactionController from '../controllers/transaction.controller.js';
-import * as linkController from '../controllers/link.controller.js';
+import * as plaidController from '../controllers/plaid.controller.js';
 import { verifyToken } from '../controllers/auth.controller.js';
 
 const router = express.Router();
 
-router.get('/items', verifyToken, transactionController.getPlaidItems);
-router.post('/sync-all', verifyToken, transactionController.syncAllTransactions);
-router.post('/sync/:plaidItemId', verifyToken, transactionController.syncTransactions);
-router.post('/create-link-token', verifyToken, linkController.createLinkToken);
-router.post('/exchange-public-token', verifyToken, linkController.exchangePublicToken);
+router.post('/create/token', verifyToken, plaidController.createLinkToken);
+router.post('/sync/banks', verifyToken, plaidController.syncPlaidItems);
+router.post('/sync/accounts/:plaidItemId', verifyToken, plaidController.syncAccounts);
+router.post('/sync/transactions/:accountId', verifyToken, plaidController.syncAllTransactions);
+// router.get('/items', verifyToken, plaidController.syncPlaidItems);
 
 export default router;

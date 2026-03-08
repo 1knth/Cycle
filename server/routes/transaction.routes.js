@@ -6,5 +6,6 @@ const router = express.Router();
 
 router.get('/', verifyToken, transactionController.readTransactions);
 router.get('/overview', verifyToken, transactionController.calculateMetricsController);
+router.get('/analytics', verifyToken, transactionController.calculateMetricsController);
 
 export default router;

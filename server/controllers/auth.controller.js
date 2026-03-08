@@ -4,13 +4,13 @@ import bcrypt from "bcryptjs";
 import jwt from 'jsonwebtoken';
 
 export const signup = async (req, res) => {
+    // json post req with body
     const {username, email, password} = req.body;
-    
-    
+
     try {
         const user = await User.create({
-            username,
-            email,
+            username: username,
+            email: email,
             password: await bcrypt.hash(password, 12),
         });
 
@@ -18,7 +18,7 @@ export const signup = async (req, res) => {
             { id: user._id },
             process.env.JWT_SECRET,
             {expiresIn: 86400}
-        )
+        ) 
         res.status(201).send({
             message: "User registered successfully!",
             id: user._id,
@@ -83,25 +83,4 @@ export const verifyToken = (req, res, next) => {
         req.user = { _id: decoded.id };
         next();
     });
-};
-
-export const getMe = async (req, res) => {
-    try {
-        const user = await User.findById(req.user._id);
-        if (!user) {
-            return res.status(404).send({ message: 'User not found' });
-        }
-
-        const plaidItemCount = await PlaidItem.countDocuments({ user: user._id });
-
-        res.status(200).send({
-            id: user._id,
-            username: user.username,
-            email: user.email,
-            hasBankLinked: plaidItemCount > 0,
-            bankCount: plaidItemCount
-        });
-    } catch (err) {
-        res.status(500).send({ message: err.message });
-    }
 };

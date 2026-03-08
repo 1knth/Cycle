@@ -1,12 +1,22 @@
 import {Transactions} from '../models/transaction.model.js';
 import Account from '../models/account.model.js';
 
+
+export const syncBanks = async (id) => {
+    try {
+        const synced = await Transactions.findOneAndUpdate(id, {})
+
+    } catch (error) {
+        
+    }
+};
+
 export const calculateMetrics = async (userId, accountId, timeRange) => {
     try {
-        const queryFilter = { userId: userId };
+        const userIdObject = { userId: userId };
         
         if (accountId && accountId !== 'all') {
-            queryFilter.accountId = accountId;
+            userIdObject.accountId = accountId;
         }
 
         const now = new Date();
@@ -27,10 +37,10 @@ export const calculateMetrics = async (userId, accountId, timeRange) => {
         }
 
         if (startDate) {
-            queryFilter.date = { $gte: startDate };
+            userIdObject.date = { $gte: startDate };
         }
 
-        const transactions = await Transactions.find(queryFilter).sort({ date: -1 });
+        const transactions = await Transactions.find(userIdObject).sort({ date: -1 });
 
         let balance = 0;
         if (accountId && accountId !== 'all') {

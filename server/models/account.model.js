@@ -11,21 +11,24 @@ const AccountSchema = new mongoose.Schema({
         ref: 'PlaidItem',
         required: true 
     },
-    plaidAccountId: { 
+    accountId: { 
         type: String, 
         required: true,
         unique: true 
     },
+    institution: {
+        name: String,
+        id: String,
+    },
     name: String,
-    officialName: String,
     mask: String,
     type: String,
     subtype: String,
-    currentBalance: Number,
-    availableBalance: Number,
     currency: String,
-    institutionName: String,
-    institutionId: String
+    balances: {
+        currentBalance: Number,
+        availableBalance: Number,
+    },
 }, { timestamps: true });
 
 AccountSchema.index({ userId: 1 });

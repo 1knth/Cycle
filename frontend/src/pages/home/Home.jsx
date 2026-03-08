@@ -1,6 +1,6 @@
 import "../../assets/fonts/font.css";
 import './Home.css';
-import card from '../../assets/dashboard.png';
+import hero from '../../assets/dashboard.png';
 import { Link } from 'react-router-dom';
 import Navbar from "../../components/navbar/Navbar";
 
@@ -25,8 +25,10 @@ function Home () {
                         <a href="#target-why" className="why-cta">Why Cycle?</a>
                     </section>
                 </div>
-                <div className="card">
-                    <img src={card} alt='dashboard'/>
+                <div className="hero-img-container">
+                    <div className="hero-img">
+                        <img src={hero} alt='dashboard'/>
+                    </div>
                 </div>
                 <div id="target-why"></div>
                 <section className="about-section">

@@ -1,3 +1,8 @@
+@property --angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
 .home-wrapper {
     background-color: white;
     /* background:linear-gradient(white, #f4ebe3 ); */
@@ -23,29 +28,57 @@
     font-size: 7rem;
     color: #0e0f11;
 }
-.card {
+.hero-img-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    height: fit-content;
+}
+.hero-img {
     display: flex;
     justify-content: center;
     align-items: center;
     height: fit-content;
-    width: auto;
+    width: fit-content;
     margin: 50px 0 40px 0;
     opacity: 80%;
-}
-.card img{
-    border: 5px solid #aac4f8 !important;
-    height: auto;
-    width: 93vw;
-    /* filter: drop-shadow(0 0 20px #000000); */
+    transition: 0.5s ease;
     user-select: none;
+}
+.hero-img:hover {
+    filter: drop-shadow(0 0 50px #5f9aff46);
+}
+.hero-img img{
+    filter: saturate(40%);
+    /* shiny border */
+    border: 5px solid transparent !important;
+    background:
+    linear-gradient(#222, #222) padding-box, 
+    conic-gradient(from var(--angle), 
+        #5672ab, 
+        #265ece, 
+        #bcd2ff, /* This is your "shine" beam */
+        #265ece, 
+        #5672ab) border-box;
+    
+    height: auto;
+    width: 89vw;
     border-radius: 15px;
     padding: 0;
-    transform: perspective(600px) rotateY(0deg) rotateX(2deg);
-    transition: 0.3s ease;
-    filter: saturate(20%);
+    transform: perspective(600px) rotateY(0deg) rotateX(1.3deg);
+    -webkit-mask-image: linear-gradient(to bottom, black 30%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 30%, transparent 100%);
+    mask-size: 100% 200%; 
+    mask-position: 0 100%; /* Shows the top half (black) */
+    transition: --angle 0.7s ease, transform 0.5s ease, filter 0.5s ease, mask-position 0.5s ease, width 0.7s ease;
 }
 
-.card img:hover {
+.hero-img img:hover {
+    mask-position: 0 0%; /* Slides to the bottom half */
+    width:93vw;
+    filter: saturate(100%);
+    --angle: 180deg; 
     transform: perspective(600px) rotateY(0deg);
 }
 

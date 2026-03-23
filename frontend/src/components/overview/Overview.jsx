@@ -64,15 +64,13 @@ function Overview() {
     }
 
     if (localStorage.getItem('token') == null) {
-        return <div>Not logged in</div>;
+        return <p>Not logged in</p>;
     }
 
     if (accountsLoading || metricsLoading || username === "") {
-        return (
-            <Spinner/>
-        );
+        return <Spinner/>;
     }
-
+    // return error page if error
     if (accountsError || metricsError) {
         return (
             <section className="dash-component-container">

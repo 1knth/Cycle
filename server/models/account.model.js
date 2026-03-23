@@ -28,6 +28,7 @@ const AccountSchema = new mongoose.Schema({
     balances: {
         currentBalance: Number,
         availableBalance: Number,
+        limit: Number
     },
 }, { timestamps: true });
 

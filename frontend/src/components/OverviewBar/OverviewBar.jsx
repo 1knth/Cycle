@@ -14,7 +14,6 @@ export default function OverviewBar({username}) {
     
     const handleRefresh = async () => {
         try {
-            await syncAllBanks();
             const metricsData = await calculateMetrics(selectedAccount.id, timeRange);
             setMetrics(metricsData);
 

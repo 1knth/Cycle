@@ -4,6 +4,6 @@ import { verifyToken } from '../controllers/auth.controller.js';
 
 const router = express.Router();
 
-router.get('/user/', verifyToken, userController.getUser);
+router.get('/user', verifyToken, userController.getUser);
 
 export default router;

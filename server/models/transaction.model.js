@@ -1,30 +1,38 @@
 import mongoose from 'mongoose';
 
 const TransactionSchema = new mongoose.Schema({
-    userId: { 
-        type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true 
-    },
-    accountId: String,
-    plaidItemId: { 
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'PlaidItem',
-        required: true
-    },
-    amount: Number,
-    category_id: String,
-    date: Date,
-    merchantName: String,
-    plaidTransactionId: { 
-        type: String, unique: true 
-    },
-    pending: {
-        type: Boolean,
-        default: false
-    }
+  userId: { 
+      type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true 
+  },
+  accountId: {
+    type: String,
+    required: true
+  },
+  plaidItemId: { 
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'PlaidItem',
+      required: true
+  },
+  amount: {
+    type: Number,
+    required: true
+  },
+  categoryId: String,
+  date: {
+    type: Date,
+    required: true
+  },
+
+  merchantName: String,
+  plaidTransactionId: { 
+      type: String, unique: true 
+  },
+  pending: {
+      type: Boolean,
+      default: false
+  }
 }, { timestamps: true });
 TransactionSchema.index({ userId: 1, date: -1 });
-TransactionSchema.index({ plaidTransactionId: 1 });
 
-const Transactions = mongoose.model('Transaction', TransactionSchema);
+export default mongoose.model('Transaction', TransactionSchema);
 
-export { Transactions };

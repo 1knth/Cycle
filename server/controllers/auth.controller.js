@@ -1,4 +1,4 @@
-import User from '../models/user.js';
+import User from '../models/user.model.js';
 import PlaidItem from '../models/plaid-item.model.js';
 import bcrypt from "bcryptjs";
 import jwt from 'jsonwebtoken';

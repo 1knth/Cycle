@@ -1,6 +1,11 @@
 import axios from 'axios';
-
 const API_URL = 'http://localhost:5001';
+
+// available endpoints: 
+// /api/auth
+// /api/plaid
+// /api/users
+// /api/dashboard
 
 // Helper to get auth headers
 const getAuthHeaders = () => {
@@ -24,7 +29,7 @@ export const login = async (data) => {
 
 // User APIs
 export const getUser = async () => {
-  const response = await axios.get(`${API_URL}/api/auth/me`, {
+  const response = await axios.get(`${API_URL}/api/users/me`, {
     headers: getAuthHeaders(),
   });
   return response.data;
@@ -38,8 +43,8 @@ export const createLinkToken = async () => {
   return response.data;
 };
 
-export const exchangePublicToken = async (publicToken, metadata) => {
-  const response = await axios.post(`${API_URL}/api/plaid/exchange-public-token`, {
+export const syncBanks = async (publicToken, metadata) => {
+  const response = await axios.post(`${API_URL}/api/plaid/sync/banks`, {
     public_token: publicToken,
     metadata,
   }, {
@@ -50,27 +55,20 @@ export const exchangePublicToken = async (publicToken, metadata) => {
 
 
 // Transaction APIs
-export const readTransactions = async (amount) => {
-  const response = await axios.get(`${API_URL}/api/transactions?limit=${amount}`, {
+export const readTransactions = async (limit, accountId) => {
+  const params = new URLSearchParams();
+  if (limit) params.append('limit', limit)
+  if (accountId) params.append('accountId', accountId);
+  const response = await axios.get(`${API_URL}/api/users/me/transactions?${params.toString()}`, {
     headers: getAuthHeaders(),
   });
   return response.data;
 };
 
-export const calculateAnalytics = async (accountId, timeRange) => {
-  const params = new URLSearchParams();
-  if (accountId) params.append('accountId', accountId);
-  if (timeRange) params.append('timeRange', timeRange);
-
-  const response = await axios.get(`${API_URL}/api/transactions/overview?${params.toString()}`, {
-    headers: getAuthHeaders(),  
-  });
-  return response.data;
-}
 
 // Sync all transactions from Plaid to MongoDB
-export const syncTransactions = async () => {
-  const response = await axios.post(`${API_URL}/api/plaid/sync-all`, {}, {
+export const syncTransactions = async (accountId) => {
+  const response = await axios.post(`${API_URL}/api/plaid/sync/transactions/${accountId}`, {}, {
     headers: getAuthHeaders(),
   });
   return response.data;
@@ -81,45 +79,23 @@ export const calculateMetrics = async (accountId, timeRange) => {
   if (accountId) params.append('accountId', accountId);
   if (timeRange) params.append('timeRange', timeRange);
   
-  const response = await axios.get(`${API_URL}/api/transactions/overview?${params.toString()}`, {
+  const response = await axios.get(`${API_URL}/api/dashboard/overview?${params.toString()}`, {
     headers: getAuthHeaders(),
   });
   return response.data;
 };
 
 export const getAccounts = async () => {
-  const response = await axios.get(`${API_URL}/api/accounts`, {
+  const response = await axios.get(`${API_URL}/api/users/me/accounts`, {
     headers: getAuthHeaders(),
   });
   return response.data;
 };
 
-export const syncAccounts = async () => {
-  const response = await axios.post(`${API_URL}/api/accounts/sync`, {}, {
+export const syncAccounts = async (plaidItemId) => {
+  const response = await axios.post(`${API_URL}/api/plaid/sync/accounts/${plaidItemId}`, {}, {
     headers: getAuthHeaders(),
   });
   return response.data;
 };
 
-export const getLinkedBanks = async () => {
-  const response = await axios.get(`${API_URL}/api/plaid/items`, {
-    headers: getAuthHeaders(),
-  });
-  return response.data;
-};
-
-// Sync all banks (for login)
-export const syncAllBanks = async () => {
-  const response = await axios.post(`${API_URL}/api/plaid/sync-all`, {}, {
-    headers: getAuthHeaders(),
-  });
-  return response.data;
-};
-
-// Sync specific bank
-export const syncBank = async (plaidItemId) => {
-  const response = await axios.post(`${API_URL}/api/plaid/sync/${plaidItemId}`, {}, {
-    headers: getAuthHeaders(),
-  });
-  return response.data;
-};

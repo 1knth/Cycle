@@ -6,7 +6,7 @@ import user_icon from '../../assets/person.png';
 import password_icon from '../../assets/password.png';
 import Navbar from '../../components/navbar/Navbar';
 import { useNavigate } from 'react-router-dom';
-import { syncTransactions, signup, login } from '../api/api.js';
+import { signup, login } from '../api/api.js';
 
 function Signup() {
     const [email, setEmail] = useState('');
@@ -39,15 +39,6 @@ function Signup() {
             localStorage.setItem("token", data.accessToken);
             
             console.log("Success!", data);
-            
-            if (data.hasBankLinked) {
-                try {
-                    await syncTransactions();
-                    console.log("Transactions synced successfully");
-                } catch (syncErr) {
-                    console.error("Bank account not linked", syncErr);
-                }
-            }
             
             navigate('/dashboard');
             

@@ -1,12 +1,11 @@
 import './LinkBank.css';
 import PlaidLinkButton from './PlaidLinkButton.jsx'
-import {IsLoggedIn} from '../context/context.jsx';
 
 function LinkAccount({ onLinked }) {
 
     return (
         <>
-            {IsLoggedIn() 
+            {!!localStorage.getItem('token') 
             ? (<section className="Link-Plaid-Container">
                     <div className='Card'>
                         <div className="wrapper">

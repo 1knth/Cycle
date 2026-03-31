@@ -87,6 +87,7 @@ export const syncPlaidItems = async (id, token) => {
 
 
     return {
+      success: true,
       plaidItem: {
         _id: plaidItem._id,
         plaidItemID: plaidItem.plaidItemId,
@@ -224,7 +225,7 @@ export const syncAccounts = async (itemId, userId) => {
 
 export const syncTransactions = async (accountId, userId) => {
   try {
-    const account = await Account.findById(accountId);
+    const account = await Account.findOne({accountId});
     if (!account) {
       return { success: false, error: "Account not found in database." };
     }
@@ -262,6 +263,7 @@ export const syncTransactions = async (accountId, userId) => {
               plaidItemId: account.plaidItemId,
               amount: t.amount,
               date: t.date,
+              name: t.name || t.merchant_name || null,
               merchantName: t.merchant_name,
               categoryId: t.personal_finance_category?.primary || "Uncategorized",
               pending: t.pending,
@@ -278,6 +280,7 @@ export const syncTransactions = async (accountId, userId) => {
             $set: {
               amount: t.amount,
               date: t.date,
+              name: t.name || t.merchant_name || null,
               merchantName: t.merchant_name,
               categoryId: t.personal_finance_category?.primary || "Uncategorized",
               pending: t.pending,

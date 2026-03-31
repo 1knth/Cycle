@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { usePlaidLink } from 'react-plaid-link';
-import { syncBank, createLinkToken, exchangePublicToken } from '../../pages/api/api.js';
+import { syncBanks, syncAccounts, createLinkToken } from '../../pages/api/api.js';
 import './PlaidLinkButton.css';
 
 function PlaidLinkButton({ onLinked }) {
@@ -22,18 +22,18 @@ function PlaidLinkButton({ onLinked }) {
 
   const onSuccess = useCallback(async (publicToken, metadata) => {
     try {
-      const exchangeData = await exchangePublicToken(publicToken, metadata);
-      
-      if (!exchangeData.success) {
+      const syncData = await syncBanks(publicToken, metadata);
+
+      if (!syncData.plaidItem) {
         throw new Error('Failed to exchange token');
       }
 
       setIsSyncing(true);
-      const plaidItemId = exchangeData.plaidItem._id;
-      const syncResult = await syncBank(plaidItemId);
+      const plaidItemId = syncData.plaidItem._id;
+      const syncResult = await syncAccounts(plaidItemId);
       
-      if (syncResult.success && syncResult.stats.added > 0) {
-        alert(`Bank connected! ${syncResult.stats.added} transactions imported.`);
+      if (syncResult.success && syncResult.inserted > 0) {
+        alert(`Bank connected! ${syncResult.inserted} accounts imported.`);
       } else {
         alert("Bank connected! Your transactions will appear shortly.");
       }

@@ -1,27 +1,17 @@
-import {useState} from 'react';
+import { useSearchParams } from 'react-router-dom';
 import AccountSelector from '../account-selector/Account-Selector.jsx';
 import refresh from '../../assets/refresh.svg';
-import {syncAllBanks,calculateMetrics} from '../../pages/api/api.js';
 
-export default function OverviewBar({username}) {
-    const [timeRange, setTimeRange] = useState(null);
-    const [metrics, setMetrics] = useState(null);
-    const [account, selectedAccount] = useState(null);
+export default function OverviewBar({ username, accounts }) {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const timeRange = searchParams.get('range') || 'ALL';
     
     const handleTimeRangeChange = (range) => {
-        setTimeRange(range);
+        setSearchParams(prev => {
+            prev.set('range', range);
+            return prev;
+        });
     };
-    
-    const handleRefresh = async () => {
-        try {
-            const metricsData = await calculateMetrics(selectedAccount.id, timeRange);
-            setMetrics(metricsData);
-
-        } catch (err) {
-            console.error('Error refreshing:', err);
-        }
-    };
-
 
     return (
         <div className="filter-bar">
@@ -30,11 +20,9 @@ export default function OverviewBar({username}) {
                 <p>{username?.charAt(0).toUpperCase() + username?.slice(1) || "User"}</p>
             </div>
             <div className="filter-buttons">
-                {/* Account Selector */}
-                <AccountSelector/>
+                <AccountSelector accounts={accounts} />
                 
                 <div style={{margin:'0.3rem', width: '0.2rem',height: '2rem', background: 'black', opacity: '10%', borderRadius:'3rem'}}></div>
-                {/* Time Range Filters */}
                 <button 
                     className={timeRange === '1W' ? 'active' : ''}
                     onClick={() => handleTimeRangeChange('1W')}
@@ -58,10 +46,6 @@ export default function OverviewBar({username}) {
                     onClick={() => handleTimeRangeChange('ALL')}
                 >
                     <h6>ALL</h6>
-                </button>
-                <div style={{margin:'0.3rem', width: '0.2rem',height: '2rem', background: 'black', opacity: '10%', borderRadius:'3rem'}}></div>
-                <button className="refresh-btn" onClick={() => handleRefresh()}>
-                    <img src={refresh} style={{width: '1.2rem', filter: 'invert(100%)'}}></img>
                 </button>
             </div>
         </div>

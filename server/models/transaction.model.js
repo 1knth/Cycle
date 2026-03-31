@@ -23,6 +23,7 @@ const TransactionSchema = new mongoose.Schema({
     required: true
   },
 
+  name: String,
   merchantName: String,
   plaidTransactionId: { 
       type: String, unique: true 

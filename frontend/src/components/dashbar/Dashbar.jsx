@@ -1,23 +1,12 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
-import {IsLoggedIn} from '../context/context.jsx'
 import './Dashbar.css'
 import { NavLink } from 'react-router-dom'; // handles link clicks
 import overviewlogo from '../../assets/overviewlogo.png'
-import {getUser} from '../../pages/api/api.js'
-import {useState, useEffect} from 'react';
 
-function Dashbar () {
+function Dashbar ({ user }) {
     const navigate = useNavigate();
-    const [bankLinked, setBankLinked] = useState(null); 
     const logo = require('../../assets/blackname.png');
-    useEffect(() => {
-        const auth = async () => {
-            const user = await getUser();
-            setBankLinked(user.hasBankLinked);
-            console.log(bankLinked);
-        }
-    },[setBankLinked])
     
     const dashbarItems = [
         {title: "Overview", path:"overview", key:5, picture: overviewlogo}, 
@@ -42,14 +31,14 @@ function Dashbar () {
                 <img className="dashboard-logo" src={logo} onClick={() => {navigate('/')}}></img>
             </div>
             { 
-                IsLoggedIn() ? (   
+                !!localStorage.getItem('token') ? (   
                 <div className="dashbar-container">
                     <ul className="dashbar-ul">{listItems}</ul>
                 </div>
                 ) : (<div></div>)
             }
             <div className="user-info">
-                { IsLoggedIn() ?
+                { !!localStorage.getItem('token') ?
                     ( 
                         <>
                             <button onClick={() => {

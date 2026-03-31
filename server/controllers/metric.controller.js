@@ -5,13 +5,15 @@ import { getRange } from '../utils/range.js';
 
 export const calculateMetrics = async (req, res) => {
   try {
-    // from middleware verify token
     const query = {
       userId: req.user._id,
       timeRange: 'ALL',
     };
     if (req.query.timeRange) {
       query.timeRange = getRange(req.query.timeRange);
+    }
+    if (req.query.accountId && req.query.accountId !== 'all') {
+      query.accountId = req.query.accountId;
     }
     
     const response = await calculateMetricsService(query);

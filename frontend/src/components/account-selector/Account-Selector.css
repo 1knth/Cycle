@@ -7,13 +7,13 @@
     z-index: 1;
 }
 .account-selector {
-    opacity: 70% !important;
+    opacity: 85% !important;
     display: flex;
     flex-direction: row;
     justify-content: center !important;
     align-items: center !important;
     background-color: transparent !important;
-    border: 1.5px solid black !important;
+    border: 1.5px solid rgba(0,0,0,0.45) !important;
     color: black !important;
     font-weight: 550 !important;
 }
@@ -98,8 +98,16 @@
     .accounts-container {
         font-size: 2rem;
     }
-
-
+    .account-selector p {
+      font-size: 0.8rem !important
+    }
+    .account-selector div {
+      gap: 3px !important;
+    }
+    .account-selector {
+      width: 9rem;
+      height: 2.7rem;
+    }
     .accounts {
         font-size: 1rem;
         max-height: 16rem;
@@ -119,7 +127,15 @@
         font-size: 0.8rem;
     }
 
-
+    .account-selector p {
+      font-size: 0.8rem !important;
+    }
+    .account-selector div {
+      gap: 5px !important;
+    }
+    .account-selector {
+      /* width: 9rem; */
+    }
     .accounts {
         margin: 1rem;
         font-size: 1.2rem;

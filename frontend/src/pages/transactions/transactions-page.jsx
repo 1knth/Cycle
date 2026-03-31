@@ -1,21 +1,24 @@
 import Transactions from '../../components/transactions/Transactions.jsx';
 import './transactions-page.css';
 import SearchBar from '../../components/SearchBar/SearchBar.jsx';
+import OverviewBar from '../../components/OverviewBar/OverviewBar.jsx';
 import {useState, useEffect} from 'react';
 import {readTransactions} from '../api/api.js';
+import {useOutletContext} from 'react-router-dom';
 
 function TransactionsPage() {
     const [searchTerm, setSearchTerm] = useState('');
     const [results, setResults] = useState([]);
+    const { accounts, user } = useOutletContext();
     // useEffect(() => {
         const handleSearch = async () => {
             if (!searchTerm) {
-                    setResults([]);
-                    return;
+              setResults([]);
+              return;
             }
             try {
-                const transactions = await readTransactions();
-                const filtered = transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+              const transactions = await readTransactions();
+              const filtered = transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
             } catch (error) {
                 console.error('Error fetching transactions:', error);
             }
@@ -28,7 +31,11 @@ function TransactionsPage() {
     // }, [searchTerm]);
 
     return (
-        <section className='transactions-page-container'>
+        <section className='overview-container'>
+            <OverviewBar 
+              username={user?.username}
+              accounts={accounts}
+              />
             <div className="transactions-container">
                 <div className="transactions-bar">
                     <h1>Transactions</h1>

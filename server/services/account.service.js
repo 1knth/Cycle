@@ -9,7 +9,7 @@ export const getBalances = async (userId, accountId) => {
       availableBalance: acc.availableBalance + (a.balances.availableBalance || 0),
     }), { currentBalance: 0, availableBalance: 0 });
   }
-  const account = await Account.findOne({userId, plaidItemId:accountId });
+  const account = await Account.findOne({userId, accountId:accountId });
   return {
     currentBalance: account?.balances?.currentBalance || 0,
     availableBalance: account?.balances?.availableBalance || 0,

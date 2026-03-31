@@ -70,6 +70,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    opacity:60%;
     width: 10rem;
     height: 3rem;
     color: rgb(0, 0, 0);
@@ -79,8 +80,8 @@
 }
 
 .dashbar-li:hover{
-    color: rgb(255, 255, 255);
-    background-color: rgba(83, 83, 83, 0.352);
+    /* color: rgb(255, 255, 255); */
+    background-color: rgba(183, 183, 183, 0.352);
     height: 3rem;
 }
 
@@ -90,11 +91,11 @@
     align-items: center;
     width: 10rem;
     height: 3rem;
-    color: rgb(255, 255, 255);
-    background-color: rgba(67, 56, 43, 0.623);
+    color: rgb(0, 0, 0);
+    /* background-color: rgba(67, 56, 43, 0.623); */
     border-radius: 14px;
-    font-size: 20px;
-    font-weight: 500;
+    font-size: 22px;
+    /* font-weight: 800; */
     transition: 0.3s ease;
 }
 
